@@ -1,0 +1,15 @@
+<div class="publish-tab-header">
+    @for (tab of tabs; track tab) {
+    <button (click)="selectTab(tab)" [class.active]="activeTab() === tab">
+        {{ tab.title() }}
+    </button>
+    }
+</div>
+
+<div class="publish-tab-body">
+    @if (activeTab()) {
+    <ng-container *ngComponentOutlet="activeTab()!.component()" />
+    }
+</div>
+
+<ng-content></ng-content>

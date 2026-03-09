@@ -1,0 +1,8 @@
+<div class="xpm-edit-container">
+  <input #input [value]="inputValue()" autocomplete="off" [name]="fieldName()"
+    [attr.xpm-editable-field-position]="fieldPosition()" (input)="onInput($event)" class="edit-mode-input" autofocus />
+  <div class="xpm-edit-btn-group">
+    <button (click)="save()" class="xpm-btn">Save</button>
+    <button (click)="cancel()" class="xpm-btn">Cancel</button>
+  </div>
+</div>

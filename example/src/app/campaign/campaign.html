@@ -1,0 +1,37 @@
+<div id="savings-subsidies" class="mx-auto savings-subsidies">
+  @for (campaignComponent of components(); track campaignComponent.id) {
+    <headless-xpm-editor [tcmId]="'tcm:'+campaignComponent.publicationId+'-'+campaignComponent.itemId">
+      <div class="container-fluid px-0">
+        <div class="row no-gutters">
+          <div class="col">
+            <div class="jumbotron jumbotron-fluid home-banner position-relative mb-0">
+              <img
+                [src]="campaignComponent.image.variants.edges[0]?.node?.downloadUrl"
+                alt=""
+                class="img-fluid position-absolute"
+              />
+              <div class="container-fluid h-100">
+                <div class="row h-100 justify-content-center align-items-center pt-2">
+                  <div class="col-md-6 text-center jumbotron-padding">
+                    <h1
+                      class="h4 text-white banner-text text-uppercase savings-subsidies-title position-relative pb-4"
+                    >
+                      {{ campaignComponent.headline }}
+                    </h1>
+                    <div class="text-white savings-subsidies-desc">
+                      {{ campaignComponent.articleBody?.[0]?.content?.fragments?.[0]?.html }}
+                    </div>
+                    <a href="#" class="btn btn-light mt-1 py-2 px-3 jmb-btn text-uppercase"
+                      >Learn More</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="twitter-widget" style="max-width: 25%"></div>
+        </div>
+      </div>
+    </headless-xpm-editor>
+  }
+</div>

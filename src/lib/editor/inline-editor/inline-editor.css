@@ -1,0 +1,29 @@
+.xpm-edit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 2px solid green;
+    padding: 10px;
+}
+
+.edit-mode-input {
+    width: 100%;
+    border-radius: 5px;
+    padding: 5px;
+    outline: none;
+    border: 1px solid #eee;
+}
+
+.xpm-edit-btn-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.xpm-edit-btn-group button.xpm-btn {
+    border: none;
+    padding: 5px 13px;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -1,0 +1,57 @@
+let stylesInjected = false;
+
+export function injectHeadlessXpmStyles(isBrowser: boolean) {
+    if (!isBrowser || stylesInjected) return;
+    stylesInjected = true;
+
+
+    if (typeof document === 'undefined') return;
+
+    const style = document.createElement('style');
+    style.setAttribute('data-headless-xpm', '');
+
+    style.textContent = `
+    .headlessXpmRegion {
+        border: 1px solid transparent;
+        position: relative;
+        transition: border-color .2s ease;
+    }
+
+    .headlessXpmRegion.headlessXpmRegion-hover:hover {
+        border: 2px solid #17c13e !important;
+        box-shadow: 0 0 0 1px #17c13e;
+        opacity: 1;
+    }
+
+    .headlessXpmContent{
+
+    }
+
+    .headlessXpmIcon {
+        align-items: center;
+        background: #007373;
+        border-radius: 4px;
+        color: #fff;
+        display: flex;
+        height: 32px;
+        justify-content: center;
+        opacity: 0;
+        padding: 4px;
+        position: absolute;
+        right: 6px;
+        text-decoration: none;
+        top: 6px;
+        transition: opacity .3s ease;
+        width: 32px;
+        z-index: 999;
+    }
+
+    .headlessXpmRegion-hover:hover .headlessXpmIcon {
+        opacity: 1;
+    }
+    .headlessXpmContent [xpm-editable-field-name]:hover {
+        border: 2px solid green;
+    }    
+    `;
+    document.head.appendChild(style);
+}

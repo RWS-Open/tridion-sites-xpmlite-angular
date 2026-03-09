@@ -1,0 +1,40 @@
+<div class="cp-page-regions">
+
+    @for (region of regions(); track region.RegionName; let idx=$index) {
+    <div class="cp-page-region nested">
+        <div class="cp-page-region-title" [class.active]="region.RegionName===selectedItem()?.name"
+            [attr.item-type]="region.$type"
+            (click)="onItemSelect(region.$type, region.RegionName, region.RegionSchema.IdRef, idx)">
+            <span class="cp-page-region-icon">
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1em" height="1em">
+                    <path
+                        d="M16 12v2a2 2 0 01-1.85 1.995L14 16h-2v-2h2v-2h2zM2 12v2h2v2H2a2 2 0 01-1.995-1.85L0 14v-2h2zm8 2v2H6v-2h4zm6-8v4h-2V6h2zM2 6v4H0V6h2zm2-6v2H2v2H0V2A2 2 0 011.85.005L2 0h2zm10 0a2 2 0 011.995 1.85L16 2v2h-2V2h-2V0h2zm-4 0v2H6V0h4z">
+                    </path>
+                </svg>
+            </span>
+            <span class="cp-page-region-name">{{ region.RegionName }}</span>
+            @if (region.Metadata.maxItems) {
+            <span class="cp-page-region-constraint">({{ region.Metadata.maxItems }})</span>
+            }
+        </div>
+        @for (component of region.ComponentPresentations; track component; let i=$index) {
+        <div class="cp-page-components">
+            <div class="cp-page-component" [class.active]="component.Component.Title===selectedItem()?.name"
+                [attr.item-type]="component.$type"
+                (click)="onItemSelect(component.$type, component.Component.Title,  component.Component.IdRef,  i)">
+                <span class="cp-page-component-icon">
+                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                        width="1em" height="1em">
+                        <path
+                            d="M16 5v10.589a.421.421 0 0 1-.428.411H.428A.421.421 0 0 1 0 15.589V5h16zM.208 4L3.368.158A.433.433 0 0 1 3.702 0H12.3c.132 0 .253.058.335.158L15.796 4H.207z"
+                            fill="#758099"></path>
+                    </svg>
+                </span>
+                <span class="cp-page-component-name">{{ component.Component.Title }}</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

@@ -1,0 +1,32 @@
+<div typeof="Region" data-region="Product Banner" [attr.data-region]="region()?.name">
+    @for (bannerComponent of region()?.components; track bannerComponent.id; let idx = $index) {
+    <headless-xpm-editor [tcmId]="'tcm:'+bannerComponent.publicationId+'-'+bannerComponent.itemId">
+        <section class="p-banner" [attr.data-component]="bannerComponent.title">
+            <div class="jumbotron jumbotron-fluid product-banner position-relative disabledEditor"
+                data-fieldname="media" data-index="0">
+                <img [src]="bannerComponent.media.variants.edges[0]?.node?.downloadUrl" alt=""
+                    class="img-fluid position-absolute">
+                <div class="container-fluid h-100">
+                    <div class="row h-100 align-items-center">
+                        <div class="col-lg-6 mx-auto text-center">
+                            <h1 class="h4 text-white banner-text text-uppercase position-relative animated fadeInLeft disabledEditor"
+                                [attr.xpm-editable-field-name]="bannerComponent | fieldNamePipe: bannerComponent.headline"
+                                [attr.xpm-editable-field-position]="idx">
+                                {{bannerComponent.headline}}
+                            </h1>
+                            <p class="text-white pt-4 sub-heading animated fadeInUp delay-1s disabledEditor"
+                                [attr.xpm-editable-field-name]="bannerComponent.content.data | fieldNamePipe: bannerComponent.content.data.content"
+                                [attr.xpm-editable-field-position]="idx">
+                                {{bannerComponent.content.data.content}}
+                            </p>
+                            <a href="#" class="btn btn-light mt-2 py-2 px-4 jmb-btn text-uppercase disabledEditor"
+                                data-fieldname="linkText" data-index="0">{{bannerComponent.link?.linkText}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </headless-xpm-editor>
+
+    }
+</div>

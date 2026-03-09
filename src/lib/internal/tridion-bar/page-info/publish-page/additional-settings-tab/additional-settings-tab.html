@@ -1,0 +1,80 @@
+<div class="additional-settings">
+    <div class="additional-options">
+        <div class="additional-options-heading">
+            Dependent items
+        </div>
+        <div class="additional-options-group">
+            @for(dependentItem of dependentItems();track dependentItem.id){
+            <div class="additional-option-item">
+                <input type="radio" name="dependent-item"
+                    [id]="'dependent-item'+dependentItem.id"
+                    [checked]="dependentItem.value===selectedDependentItems()"
+                    (change)="onDependentItemsSelect(dependentItem.value)" />
+                <label [for]="'dependent-item'+dependentItem.id">
+                    {{dependentItem.label}}
+                </label>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="additional-options">
+        <div class="additional-options-heading">
+            Items in progress
+        </div>
+        <div class="additional-options-group">
+            @for(items of itemsInProgress();track items.id){
+            <div class="additional-option-item">
+                <input type="radio" name="item-in-progress" [id]="'item-in-progress'+items.id" [checked]="items.value===selectedItemsInProgress()"
+                    (change)="onItemsInProgressSelect(items.value)" />
+                <label [for]="'item-in-progress'+items.id">
+                    {{items.label}}
+                </label>
+            </div>
+            }
+        </div>
+    </div>
+    <div class="additional-options">
+        <div class="additional-options-heading">
+            Publishing priority
+        </div>
+        <div class="additional-options-group">
+            @for(priority of publishingPriority();track priority.id){
+            <div class="additional-option-item">
+                <input type="radio" name="publishing-priority" [id]="'publishing-priority'+priority.id"
+                    [checked]="priority.value===selectedOverridePublishPriority()"
+                    (change)="onPrioritySelect(priority.value)" />
+                <label [for]="'publishing-priority'+priority.id">
+                    {{priority.label}}
+                </label>
+            </div>
+            }
+            <div class="additional-option-item">
+                <div class="publishing-priority-dropdown"
+                    [style]="{background:isPublishPrioritySet() ? '#dee2e6' : ''}">
+
+                    <div #dropdownContainer class="dropdown-container">
+                        <button class="dropdown-button" (click)="toggleDropdown()" [disabled]="isPublishPrioritySet()">
+                            {{selectedPublishPriority()}}
+                            <span class="arrow" [class.up]="isOpen()">
+                                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                    viewBox="0 0 16 16" width="1rem" height="1rem">
+                                    <path
+                                        d="M11.58631 5.00055H4.38008c-1.21845 0-1.8451 1.40973-.97473 2.2293l3.58569 3.37672c.557.5246 1.4273.5246 1.98431 0l3.62049-3.37671c.8703-.85236.2437-2.26209-1.00953-2.22931z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu" [class.show]="isOpen()">
+                            @for(priority of priorities();track priority){
+                            <li (click)="onPublishingPrioritySelect(priority)">
+                                {{ priority }}
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

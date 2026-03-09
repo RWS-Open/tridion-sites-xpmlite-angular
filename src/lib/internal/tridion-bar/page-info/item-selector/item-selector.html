@@ -1,0 +1,214 @@
+<div class="item-selector-overlay">
+    <div class="item-selector-modal">
+        <div class="item-selector-modal-header">
+            <div class="item-selector-modal-header-title">
+                Select an Item
+            </div>
+            <div class="item-selector-modal-close" (click)="toggleItemSelector()">
+                <div class="modal-header-actions">
+                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                        width="1em" height="1em">
+                        <path
+                            d="M9.697 8l5.128-5.128 1.058-1.057a.4.4 0 0 0 0-.566L14.75.117a.4.4 0 0 0-.566 0L8 6.303 1.814.117a.4.4 0 0 0-.565 0L.117 1.248a.4.4 0 0 0 0 .566L6.303 8 .117 14.185a.4.4 0 0 0 0 .566l1.131 1.132a.4.4 0 0 0 .566 0L8 9.697l5.128 5.128 1.057 1.058a.4.4 0 0 0 .566 0l1.132-1.132a.4.4 0 0 0 0-.566L9.697 8z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="item-selector-modal-body">
+            <div class="item-selector-modal-sidebar">
+                @if(publicationTitle()){
+                <div class="publicaton-title">
+                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                        width="1em" height="1em" style="color: rgb(117, 128, 153);">
+                        <path
+                            d="M8 0C3.58203 0 0 3.581 0 8c0 4.41803 3.58203 8 8 8 4.419 0 8-3.58197 8-8 0-4.419-3.581-8-8-8zm4.01501 10.16003S10.84406 12.68903 10 13c-.39697.146-.52295 1.11401-1 2l.03601-1.63995c.06702-.93702-.37299-2.42102-.36798-2.88105.00201-.37-1.26398-.48095-1.279-1.10595-.00903-.36805.06-.55701.11701-.93006C6 8 5.57501 6.651 4.948 6.23303c-.01795-.01202-.11695.93-.11695.93l-.276-1.099c-.289-.15601-.182-.43604-.36303-1.34302-.06598-.333-.63-.34198-.87201-.58197-.24897-.24805.83001-1.065 1.10504-1.279C5.057 2.36903 6 1 9 1l-.79596 1.86102 1.5-.65002c.557.11004.958.273 1.34998.53503.044.029-.081.39899.01501.49298-.37598.19-.72998.34699-1.05902.54499-.19397.117-.39899.26904-.51495.45703-.20404.32898-.51502 1.12298-.91101 1.03796-.06702-.01495-.13703-.02295-.206-.034l-.078.62702-.52301.40698.11597-.93097s-.47596.01001-.68897.339c-.48602.752-.07 1.127.01099 1.302 0 0 1.64398.15002 2.32599.29199C9.61902 7.297 10 7 11 8c.32703.32703 1.08502 1.56 1.19904 1.95001.02496.08801-.175.13404-.18403.21002z">
+                        </path>
+                    </svg>
+                    {{publicationTitle()}}
+                </div>}
+                @for(orgItem of organizationalItems(); track orgItem.id){
+                <app-organizational-tree-node [node]="orgItem" />
+                }
+            </div>
+            <div class="item-selector-modal-main"
+                style="display: flex;justify-content: space-between;flex-direction: column;">
+                <div>
+                    <div class="item-selector--current-item">
+                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                            width="1em" height="1em" style="cursor: pointer;">
+                            <path
+                                d="M3.11006 4.2343L6.23425 1.11009C6.38103 0.963305 6.61897 0.963305 6.76575 1.11009L9.88994 4.2343C10.0367 4.38108 10.0367 4.61902 9.88994 4.7658L9.62422 5.03152C9.47744 5.1783 9.2395 5.1783 9.09275 5.03152L7.0625 3.0013V13.875H12.2492C12.2985 13.875 12.3473 13.8847 12.3928 13.9035C12.4383 13.9224 12.4796 13.95 12.5144 13.9848L12.8894 14.3598C13.1257 14.5961 12.9583 15 12.6242 15H6.6875C6.27328 15 5.9375 14.6642 5.9375 14.25V3.0013L3.90728 5.03149C3.7605 5.17827 3.52256 5.17827 3.37581 5.03149L3.11009 4.76577C2.96331 4.61902 2.96331 4.38108 3.11006 4.2343Z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 13"
+                            width="1em" height="1em">
+                            <path
+                                d="M7.94 1.94l-1.214.808A1.5 1.5 0 0 1 5.894 3H0V1.4A1.4 1.4 0 0 1 1.4 0h4.186a1 1 0 0 1 .707.293l1.646 1.646zM9.65 2H14.6A1.4 1.4 0 0 1 16 3.4v8.2a1.4 1.4 0 0 1-1.4 1.4H1.4A1.4 1.4 0 0 1 0 11.6V4h5.894a2.5 2.5 0 0 0 1.387-.42L9.651 2z"
+                                fill="#ffb238"></path>
+                        </svg>
+                        <span>{{currentItem()}}</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <!-- <th><input type="checkbox" /></th> -->
+                                <th></th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Schema</th>
+                                <th>Date Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of tableData(); track item.id) {
+                            <tr>
+                                <td>
+                                    <input type="checkbox"
+                                        (change)="getComponentTemplateLinks($event, item.id, item.label, item.schemaId)"
+                                        [disabled]="item.$type!=='Component'" [attr.schema-id]="item.schemaId"
+                                        [attr.schema-title]="item.schema" [attr.component-id]="item.id"
+                                        [attr.component-title]="item.label"
+                                        [ngStyle]="{cursor : item.$type==='Folder' ? 'not-allowed' : 'pointer'}" />
+                                </td>
+                                <td [title]="item.label">
+                                    <span style="display: flex;align-items: center;gap:5px;cursor: pointer;">
+                                        @if(item.$type==="Folder"){
+                                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                            viewBox="0 0 16 13" width="1em" height="1em">
+                                            <path
+                                                d="M7.94 1.94l-1.214.808A1.5 1.5 0 0 1 5.894 3H0V1.4A1.4 1.4 0 0 1 1.4 0h4.186a1 1 0 0 1 .707.293l1.646 1.646zM9.65 2H14.6A1.4 1.4 0 0 1 16 3.4v8.2a1.4 1.4 0 0 1-1.4 1.4H1.4A1.4 1.4 0 0 1 0 11.6V4h5.894a2.5 2.5 0 0 0 1.387-.42L9.651 2z"
+                                                fill="#ffb238"></path>
+                                        </svg>
+                                        }
+                                        @else if(item.$type==="Component"){
+                                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                            viewBox="0 0 16 16" width="1em" height="1em">
+                                            <path
+                                                d="M16 5v10.589a.421.421 0 0 1-.428.411H.428A.421.421 0 0 1 0 15.589V5h16zM.208 4L3.368.158A.433.433 0 0 1 3.702 0H12.3c.132 0 .253.058.335.158L15.796 4H.207z"
+                                                fill="#758099"></path>
+                                        </svg>
+                                        }
+                                        <span class="ellipsis">{{item.label}}</span>
+                                    </span>
+                                </td>
+                                <td [title]="item.status ? 'Published' : ''">
+                                    <span [class.status-tag]="item.status">
+                                        @if(item.status) {
+                                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                            viewBox="0 0 16 16" width="1em" height="1em">
+                                            <path
+                                                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm6.959 8.176l-1.382-.346a.257.257 0 0 1-.153-.107l-.58-.87a.26.26 0 0 1 0-.287l.632-.948a.252.252 0 0 1 .1-.087l.772-.386c.395.872.62 1.837.62 2.855 0 .06-.008.117-.01.176zM1.032 8c0-.385.04-.759.1-1.127.23.342.468.692.642.947.19.28.413.536.69.785.346.313.728.576 1.134.78.446.225 1.099.579 1.557.833.163.09.265.263.265.45v1.034c0 .413.161.802.453 1.094.409.409.61 1.022.579 1.289v.703C3.353 14.082 1.032 11.31 1.032 8zm6.45 6.942l-.003-.789c.08-.6-.305-1.515-.876-2.087a.521.521 0 0 1-.152-.364v-1.033c0-.564-.305-1.083-.797-1.354a54.36 54.36 0 0 0-1.592-.852 4.183 4.183 0 0 1-.933-.647 3.237 3.237 0 0 1-.502-.577c-.312-.458-.824-1.217-1.142-1.689a6.986 6.986 0 0 1 5.147-4.382l1.67 1.67-.484.486a.775.775 0 0 0-.03 1.062l-.185.001a.772.772 0 0 0-.54.22l-.32.31a.769.769 0 0 0-.152.902l.129.257a1.033 1.033 0 0 0-.711-.02l-1.006.334a.9.9 0 0 0-.118 1.662l.358.179c.346.173.73.27 1.117.284.076.074.201.243.28.35.19.261.371.508.613.629l.109.054h2.275c.136 0 .27.055.365.152l.442.441a.473.473 0 0 1 .137.332.99.99 0 0 1-.293.698l-.365.366c-.16.16-.273.359-.331.577l-.036.142c-.03.119-.06.238-.103.355l-.864 2.328c-.194.016-.39.03-.589.03-.175-.001-.347-.015-.519-.027zm2.284-.21l.653-1.761c.058-.152.098-.308.137-.464l.034-.13c.01-.042.034-.082.132-.18l.296-.296c.378-.375.595-.896.595-1.43 0-.394-.16-.78-.44-1.06l-.441-.442a1.559 1.559 0 0 0-1.095-.453H7.671c-.061-.072-.14-.18-.198-.26-.265-.362-.566-.772-1.021-.772-.258 0-.517-.061-.747-.177l-.076-.037.707-.236.3.26c.14.122.32.19.506.19h.183c.27 0 .516-.137.658-.368a.768.768 0 0 0 .034-.752L7.6 5.526l.11-.106h.185a.77.77 0 0 0 .547-.227l.258-.258a.775.775 0 0 0 .03-1.063l.304-.303a1.028 1.028 0 0 0 0-1.46L7.958 1.035l.043-.002a6.963 6.963 0 0 1 5.855 3.204l-.741.371c-.2.1-.372.251-.496.438l-.632.948c-.29.435-.29.997 0 1.432l.58.87c.178.267.447.457.76.536l1.529.382a6.981 6.981 0 0 1-5.09 5.518z">
+                                            </path>
+                                        </svg>
+                                        }
+                                    </span>
+                                </td>
+                                <td [title]="item.schema"><span class="ellipsis">{{item.schema}}</span></td>
+                                <td [title]="item.date_modified"><span class="ellipsis">{{item.date_modified |
+                                        date:'dd-MMM-yyyy HH:mm'}}</span></td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 32px; color: #758099">
+                                    <div class="empty-state">
+                                        @if(isTableLoading()){
+                                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                            viewBox="0 0 16 16" width="1rem" height="1rem">
+                                            <path
+                                                d="M15.438 8.563c-0.311 0-0.563-0.252-0.563-0.563 0-0.928-0.181-1.828-0.541-2.677-0.365-0.85-0.862-1.575-1.473-2.186l-0-0c-0.61-0.612-1.336-1.11-2.142-1.456l-0.044-0.017c-0.847-0.358-1.747-0.539-2.675-0.539-0.311 0-0.563-0.252-0.563-0.563s0.252-0.563 0.563-0.563c1.080 0 2.128 0.211 3.114 0.63 0.953 0.402 1.808 0.98 2.542 1.714s1.311 1.591 1.714 2.542c0.417 0.986 0.628 2.034 0.628 3.114 0.002 0.311-0.25 0.563-0.561 0.563z">
+                                                <animateTransform attributeName="transform" type="rotate" from="0 8 8"
+                                                    to="360 8 8" dur="1s" repeatCount="indefinite"></animateTransform>
+                                            </path>
+                                        </svg>
+                                        } @else {
+                                        <p>There are no items to show.</p>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if(componentTemplateLinks().length!==0){
+                <div #dropdownContainer class="dropdown-container">
+                    <button class="dropdown-button" (click)="toggleDropdown(dropdownContainer)">
+                        {{ selectedComponentTemplate()?.Title || "Select Template" }}
+                        <span class="arrow" [class.up]="isOpen()">
+                            <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                viewBox="0 0 16 16" width="1rem" height="1rem">
+                                <path
+                                    d="M11.58631 5.00055H4.38008c-1.21845 0-1.8451 1.40973-.97473 2.2293l3.58569 3.37672c.557.5246 1.4273.5246 1.98431 0l3.62049-3.37671c.8703-.85236.2437-2.26209-1.00953-2.22931z">
+                                </path>
+                            </svg>
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu" [class.show]="isOpen()" [class.drop-up]="isDropUp()">
+                        @for(componentLink of componentTemplateLinks(); track componentLink.IdRef){
+                        <li (click)="selectOption(componentLink)">
+                            {{ componentLink.Title }}
+                        </li>
+                        }
+                    </ul>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="item-selector-modal-footer">
+            @if(toggleConstraints()){
+            <div class="constraints-block">
+                <div class="constraints-container">
+                    @for(regionConstraint of selectedRegionConstraints(); track regionConstraint){
+                    @if(regionConstraint.$type==="OccurrenceConstraint"){
+                    <div class="constraints-items-allowed">Items allowed in this Region: {{regionConstraint.MaxOccurs}}</div>
+                    }
+                    }
+                    <div class="constraints-group">
+                        <div class="allowed-items">Allowed schemas and templates:</div>
+                        <div class="constraints">
+                            @for(regionConstraint of selectedRegionConstraints(); track regionConstraint){
+                            <div class="constraints-region">
+                                @if(regionConstraint.BasedOnSchema){
+                                <div class="constraints-schema">
+                                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                        viewBox="0 0 16 16" width="1rem" height="1rem" style="color:rgb(117, 128, 153)">
+                                        <path
+                                            d="M14.667 0C15.4 0 16 .6 16 1.333v13.334C16 15.4 15.4 16 14.667 16H1.333C.6 16 0 15.4 0 14.667V1.333C0 .6.6 0 1.333 0h13.334zM9.812 3.135l-.498-.124a.244.244 0 0 0-.188.018.242.242 0 0 0-.124.142l-2.99 9.403a.2.2 0 0 0 .02.178.257.257 0 0 0 .157.113l.496.124c.065.02.127.013.189-.018a.243.243 0 0 0 .124-.142l2.99-9.403a.2.2 0 0 0-.02-.178.257.257 0 0 0-.156-.113zM5 4.665a.275.275 0 0 0-.069-.184l-.343-.4A.204.204 0 0 0 4.429 4a.204.204 0 0 0-.158.08L1.07 7.816A.275.275 0 0 0 1 8c0 .07.023.131.069.184L4.27 11.92c.046.053.099.08.158.08.06 0 .113-.027.159-.08l.343-.4A.275.275 0 0 0 5 11.334c0-.07-.023-.131-.069-.184L2.231 8l2.7-3.151A.275.275 0 0 0 5 4.665zm9.931 3.15L11.728 4.08A.204.204 0 0 0 11.57 4a.204.204 0 0 0-.158.08l-.343.401a.275.275 0 0 0-.069.184c0 .07.023.131.069.185l2.7 3.15-2.7 3.15a.275.275 0 0 0-.069.185c0 .07.023.13.069.184l.343.4c.046.054.099.081.158.081.06 0 .113-.027.158-.08l3.203-3.736A.275.275 0 0 0 15 8a.275.275 0 0 0-.069-.184z"
+                                            fill="#00a89f"></path>
+                                    </svg>
+                                    <span>{{regionConstraint.BasedOnSchema.Title}}</span>
+                                </div>
+                                }
+                                @if(regionConstraint.BasedOnSchema && regionConstraint.BasedOnComponentTemplate){
+                                <span>+ </span>
+                                }
+                                @if(regionConstraint.BasedOnComponentTemplate){
+                                <div class="constraints-component-template">
+                                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                        viewBox="0 0 16 16" width="1rem" height="1rem" style="color:rgb(117, 128, 153)">
+                                        <path
+                                            d="M16 5v10.589c0 0.226-0.193 0.411-0.428 0.411h-15.143c-0.236 0-0.428-0.185-0.428-0.411v-10.589h16zM0.208 4l3.159-3.842c0.082-0.099 0.204-0.158 0.336-0.158h8.598c0.132 0 0.254 0.058 0.336 0.158l3.159 3.842h-15.587zM12 9.718c0-0.089-0.063-0.172-0.151-0.188l-0.953-0.146c-0.052-0.172-0.125-0.344-0.213-0.51 0.177-0.245 0.37-0.474 0.547-0.714 0.026-0.036 0.042-0.073 0.042-0.12 0-0.042-0.010-0.083-0.036-0.115-0.219-0.307-0.583-0.63-0.859-0.885-0.037-0.031-0.083-0.052-0.13-0.052s-0.094 0.016-0.125 0.047l-0.74 0.557c-0.151-0.078-0.307-0.141-0.469-0.193l-0.146-0.958c-0.010-0.089-0.094-0.156-0.188-0.156h-1.156c-0.094 0-0.167 0.063-0.188 0.146-0.083 0.313-0.115 0.651-0.151 0.969-0.161 0.052-0.323 0.12-0.474 0.198l-0.719-0.557c-0.042-0.031-0.089-0.052-0.135-0.052-0.177 0-0.88 0.76-1.005 0.932-0.026 0.036-0.047 0.073-0.047 0.12s0.021 0.089 0.052 0.125c0.193 0.234 0.38 0.469 0.557 0.719-0.083 0.156-0.151 0.313-0.203 0.479l-0.969 0.146c-0.078 0.016-0.141 0.109-0.141 0.188v1.156c0 0.088 0.063 0.172 0.151 0.188l0.953 0.141c0.052 0.177 0.125 0.349 0.214 0.516-0.177 0.245-0.37 0.474-0.547 0.713-0.026 0.037-0.042 0.073-0.042 0.12 0 0.042 0.010 0.083 0.036 0.12 0.219 0.302 0.583 0.625 0.859 0.875 0.036 0.036 0.083 0.057 0.13 0.057s0.094-0.016 0.13-0.047l0.734-0.557c0.151 0.078 0.307 0.141 0.469 0.193l0.146 0.958c0.010 0.089 0.094 0.156 0.188 0.156h1.156c0.094 0 0.167-0.063 0.188-0.146 0.083-0.313 0.115-0.651 0.151-0.969 0.161-0.052 0.323-0.12 0.474-0.198l0.719 0.563c0.042 0.026 0.089 0.047 0.136 0.047 0.177 0 0.88-0.766 1.005-0.932 0.031-0.037 0.047-0.073 0.047-0.12s-0.021-0.094-0.052-0.13c-0.193-0.234-0.38-0.464-0.557-0.719 0.083-0.151 0.146-0.307 0.203-0.474l0.964-0.146c0.083-0.016 0.146-0.109 0.146-0.188v-1.156zM9.333 10.286c0 0.734-0.599 1.333-1.333 1.333s-1.333-0.599-1.333-1.333c0-0.734 0.599-1.333 1.333-1.333s1.333 0.599 1.333 1.333z">
+                                        </path>
+                                    </svg>
+                                    <span>
+                                        {{regionConstraint.BasedOnComponentTemplate.Title}}
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            <div class="modal-footer-btn-group">
+                <!-- [disabled]="selectedComponent().Title===''"  -->
+                <button (click)="showConstraint()" (blur)="hideConstraints()">Show Constraints</button>
+                <button (click)="updatePage()" [disabled]="selectedComponent()===null && selectedComponentTemplate()===null">Insert</button>
+                <button (click)="toggleItemSelector()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>

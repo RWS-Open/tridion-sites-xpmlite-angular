@@ -1,0 +1,29 @@
+{
+  "name": "headless-xpm-angular",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "exports":{
+    "./styles.css": {
+      "default": "./styles/headless-xpm.css"
+    }
+  },
+  "style": "styles/headless-xpm.css",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RWS-Open/tridion-sites-xpmminimal-angular.git"
+  },
+  "keywords": [
+    "Tridion Sites",
+    "CMS",
+    "Angular",
+    "Editor",
+    "Component"
+  ]
+}

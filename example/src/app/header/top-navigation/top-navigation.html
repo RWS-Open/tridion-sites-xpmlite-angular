@@ -1,0 +1,68 @@
+<div class="top-right-nav pl-4 top-bar">
+  <ul class="list-inline my-0 py-0">
+    <li class="list-inline-item mx-3">
+      <a href="#" class="text-white">
+        <img src="https://preview.tridiondemo.com/content/img/solar-icon.png" class="solar-icon" />
+      </a>
+    </li>
+    <li class="list-inline-item mx-3">
+      <div class="langdropdown languageSwitcher">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active text-white">
+            <a href="#" class="text-white">
+              <span
+                class="material-icons"
+                style="font-size: 16px; top: 3px; position: relative; right: 2px"
+                >language</span
+              >
+              <i class="material-icons md-16">arrow_drop_down</i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+    <li
+      class="list-inline-item mx-3 position-relative"
+      data-toggle="modal"
+      data-target="#graph-search"
+    >
+      <i class="material-icons md-16">search</i>
+    </li>
+    <li class="list-inline-item mx-3">
+      <a
+        href="/Account/Login"
+        class="text-white dropdown-toggle dropleft"
+        type="button"
+        id="login"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <i class="material-icons md-16">account_circle</i>
+      </a>
+      <div
+        class="dropdown-menu p-2 login-form"
+        aria-labelledby="login"
+        style="width: 500px; right: -12px !important; left: auto"
+      >
+        <form method="post" action="/Account/login?returnUrl=/">
+          <div class="form-row w-100">
+            <div class="col-5">
+              <input
+                type="text"
+                class="form-control"
+                id="UserName"
+                placeholder="Username"
+                name="UserName"
+              />
+            </div>
+            <div class="col-5">
+              <input type="Password" class="form-control" placeholder="Password" name="Password" />
+            </div>
+            <input class="col-2 btn btn-info" type="submit" value="Sign in" />
+          </div>
+        </form>
+      </div>
+    </li>
+  </ul>
+</div>

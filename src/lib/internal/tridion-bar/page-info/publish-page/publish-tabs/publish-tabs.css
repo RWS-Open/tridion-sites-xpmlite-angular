@@ -1,0 +1,22 @@
+.publish-tab-header {
+    display: flex;
+    gap: 10px;
+   /*  border-bottom: 2px solid #ddd; */
+   box-shadow: rgb(227, 230, 235) 0px -2px 0px inset;
+}
+
+.publish-tab-header button {
+    padding: 8px 12px;
+    background: none;
+    cursor: pointer;
+    border: none;
+    border-bottom: 3px solid transparent;
+    transition: border-color 200ms ease;
+    outline: none;
+    font-size: 14px;
+}
+
+.publish-tab-header button.active {
+    border-bottom-color: #007373;
+    color: rgb(0, 115, 115)
+}

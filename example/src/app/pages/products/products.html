@@ -1,0 +1,15 @@
+<div class="pageroot" [attr.data-page]="pageId()">
+    @for (region of typedPageData()?.data?.typedPage?.regions; track region.name) {
+    @switch (region.name) {
+        @case ('Product Banner') {
+                <app-product-banner [region]="region" />
+            }
+            @case ('Solar Products') {
+                <app-product-items [region]="region" />
+            }
+            @case ('Related Content') {
+                <app-related-items [region]="region" />
+            }
+        }
+    }
+</div>

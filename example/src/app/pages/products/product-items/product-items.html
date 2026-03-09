@@ -1,0 +1,71 @@
+<div [attr.data-region]="region()?.name">
+    <section id="our-solutions" class="mx-auto">
+        <div class="container-fluid">
+            <h6 class="text-center py-4 mt-3 mb-2 text-uppercase offerings-title position-relative">
+                The Right Solar Solution for you
+            </h6>
+            <p class="text-center pb-4 mb-3 mt-2 sub-heading">Explore the wide variety of systems that we have</p>
+            @for (productComponent of region()?.components; track productComponent.id; let idx=$index) {
+            <headless-xpm-editor [tcmId]="'tcm:' + productComponent.publicationId + '-' + productComponent.itemId">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12 p-0 card-group" data-component-id="tcm:7-485">
+                        @if(idx%2===0){
+                        <div class="card m-0 col-md-6 col-lg-6 p-0 bg-light border-0 rounded-0">
+                            <div class="card-body text-secondary pl-md-5 pr-md-5 pt-md-5 pb-0 m-md-5">
+                                <div class="p-5">
+                                    <h6 class="text-uppercase block-title position-relative"
+                                        [attr.xpm-editable-field-name]="productComponent | fieldNamePipe : productComponent.headline"
+                                        [attr.xpm-editable-field-position]="idx">
+                                        {{productComponent.headline}}
+                                    </h6>
+                                    <p class="card-text pb-4 pt-4"
+                                        [attr.xpm-editable-field-name]="productComponent | fieldNamePipe : productComponent.introduction"
+                                        [attr.xpm-editable-field-position]="idx">
+                                        {{productComponent.introduction}}</p>
+                                    <a [routerLink]="productComponent.link?.externalLink"
+                                        class="btn btn-outline-secondary px-4"
+                                        [attr.xpm-editable-field-name]="productComponent.link | fieldNamePipe : productComponent.link?.linkText"
+                                        [attr.xpm-editable-field-position]="idx">{{productComponent.link?.linkText}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-md-6 col-lg-6 p-0 border-0 rounded-0">
+                            <div class="w-100 h-100" data-fieldname="media" data-index="0">
+                                <img class="product-card-img card-img-top rounded-0 img-fluid h-100"
+                                    [src]="productComponent?.body?.[0]?.media?.variants?.edges?.[0]?.node?.downloadUrl"
+                                    alt="">
+                            </div>
+                        </div>
+                        }@else {
+                        <div class="card col-md-6 col-lg-6 p-0 border-0 rounded-0">
+                            <div class="w-100 h-100" data-fieldname="media" data-index="0">
+                                <img class="product-card-img card-img-top rounded-0 img-fluid h-100"
+                                    [src]="productComponent?.body?.[0]?.media?.variants?.edges?.[0]?.node?.downloadUrl"
+                                    alt="">
+                            </div>
+                        </div>
+                        <div class="card m-0 col-md-6 col-lg-6 p-0 bg-light border-0 rounded-0">
+                            <div class="card-body text-secondary pl-md-5 pr-md-5 pt-md-5 pb-0 m-md-5">
+                                <div class="p-5">
+                                    <h6 class="text-uppercase block-title position-relative"
+                                        [attr.xpm-editable-field-name]="productComponent | fieldNamePipe : productComponent.headline"
+                                        [attr.xpm-editable-field-position]="idx">{{productComponent.headline}}</h6>
+                                    <p class="card-text pb-4 pt-4"
+                                        [attr.xpm-editable-field-name]="productComponent | fieldNamePipe : productComponent.introduction"
+                                        [attr.xpm-editable-field-position]="idx">
+                                        {{productComponent.introduction}}</p>
+                                    <a [routerLink]="productComponent.link?.externalLink"
+                                        class="btn btn-outline-secondary px-4"
+                                        [attr.xpm-editable-field-name]="productComponent.link | fieldNamePipe : productComponent.link?.linkText"
+                                        [attr.xpm-editable-field-position]="idx">{{productComponent.link?.linkText}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </headless-xpm-editor>
+            }
+        </div>
+    </section>
+</div>

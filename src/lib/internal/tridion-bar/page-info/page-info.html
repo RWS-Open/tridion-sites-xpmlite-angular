@@ -1,0 +1,153 @@
+<div class="page-info-container">
+    <div class="page-info-header">
+        <div class="page-info-heading">
+            @if(pageTitle()){
+            <span>{{pageTitle()}}</span>
+            }
+            Page Info
+        </div>
+        <div class="page-info-close" (click)="onPageInfoClose()">
+            <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16" width="1em"
+                height="1em">
+                <path
+                    d="M9.697 8l5.128-5.128 1.058-1.057a.4.4 0 0 0 0-.566L14.75.117a.4.4 0 0 0-.566 0L8 6.303 1.814.117a.4.4 0 0 0-.565 0L.117 1.248a.4.4 0 0 0 0 .566L6.303 8 .117 14.185a.4.4 0 0 0 0 .566l1.131 1.132a.4.4 0 0 0 .566 0L8 9.697l5.128 5.128 1.057 1.058a.4.4 0 0 0 .566 0l1.132-1.132a.4.4 0 0 0 0-.566L9.697 8z">
+                </path>
+            </svg>
+        </div>
+    </div>
+    <div class="page-info-actions">
+        <div class="page-info-action delete-component">
+            <button class="page-info-action-button delete" [disabled]="selectedItem()?.type!=='ComponentPresentation'"
+                (click)="deleteItem()">
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 14 16"
+                    width="1em" height="1em">
+                    <path
+                        d="M13.75 2H10.5L9.45.6a1.5 1.5 0 0 0-1.2-.6h-2.5a1.5 1.5 0 0 0-1.2.6L3.5 2H.25a.25.25 0 0 0-.25.25v.5c0 .138.112.25.25.25h.59l1.038 11.634A1.5 1.5 0 0 0 3.372 16h7.256a1.5 1.5 0 0 0 1.494-1.366L13.159 3h.591a.25.25 0 0 0 .25-.25v-.5a.25.25 0 0 0-.25-.25zm-8.4-.8a.503.503 0 0 1 .4-.2h2.5c.157 0 .305.074.4.2l.6.8h-4.5l.6-.8zm5.775 13.344a.497.497 0 0 1-.497.456H3.372a.497.497 0 0 1-.497-.456L1.844 3h10.312l-1.031 11.544z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div class="page-info-action">
+            <button class="page-info-action-button update" [disabled]="selectedItem()?.type!=='EmbeddedRegion'"
+                (click)="toggleItemSelector()">
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1em" height="1em">
+                    <path
+                        d="M15.667 7H9V.333A.333.333 0 0 0 8.667 0H7.333A.333.333 0 0 0 7 .333V7H.333A.333.333 0 0 0 0 7.333v1.334C0 8.85.15 9 .333 9H7v6.667c0 .184.15.333.333.333h1.334c.184 0 .333-.15.333-.333V9h6.667c.184 0 .333-.15.333-.333V7.333A.333.333 0 0 0 15.667 7z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div class="page-info-action">
+            <button class="page-info-action-button save" (click)="updatePageinfo()" [disabled]="isPageUpdating()">
+                @if(isPageUpdating()) {
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1rem" height="1rem" title="Saving">
+                    <path
+                        d="M15.438 8.563c-0.311 0-0.563-0.252-0.563-0.563 0-0.928-0.181-1.828-0.541-2.677-0.365-0.85-0.862-1.575-1.473-2.186l-0-0c-0.61-0.612-1.336-1.11-2.142-1.456l-0.044-0.017c-0.847-0.358-1.747-0.539-2.675-0.539-0.311 0-0.563-0.252-0.563-0.563s0.252-0.563 0.563-0.563c1.080 0 2.128 0.211 3.114 0.63 0.953 0.402 1.808 0.98 2.542 1.714s1.311 1.591 1.714 2.542c0.417 0.986 0.628 2.034 0.628 3.114 0.002 0.311-0.25 0.563-0.561 0.563z">
+                        <animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur="1s"
+                            repeatCount="indefinite"></animateTransform>
+                    </path>
+                </svg> } @else {
+
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1em" height="1em">
+                    <path
+                        d="M15.498 3.498L12.502.502A1.714 1.714 0 0 0 11.29 0H1.714C.767 0 0 .767 0 1.714v12.572C0 15.233.767 16 1.714 16h12.572c.947 0 1.714-.768 1.714-1.714V4.71c0-.455-.18-.89-.502-1.212zm-5.212-2.355V4.57H3.429V1.143h6.857zm4.571 13.143a.572.572 0 0 1-.571.571H1.714a.572.572 0 0 1-.571-.571V1.714c0-.315.256-.571.571-.571h.572v3.714c0 .474.383.857.857.857h7.428a.857.857 0 0 0 .858-.857V1.16c.1.025.192.077.265.15l2.996 2.996a.568.568 0 0 1 .167.404v9.576zM8 7.143a3.146 3.146 0 0 0-3.143 3.143A3.146 3.146 0 0 0 8 13.429a3.146 3.146 0 0 0 3.143-3.143A3.146 3.146 0 0 0 8 7.143zm0 5.143c-1.103 0-2-.897-2-2s.897-2 2-2 2 .897 2 2-.897 2-2 2z">
+                    </path>
+                </svg>
+                }
+
+            </button>
+        </div>
+        <div class="page-info-action">
+            <button class="page-info-action-button publish" (click)="togglePublishingModal()">
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1em" height="1em">
+                    <path
+                        d="M6 11a5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5Zm5.887 2.339V11h1.43a.242.242 0 0 0 .17-.413l-2.316-2.305a.24.24 0 0 0-.34 0l-2.319 2.305a.242.242 0 0 0 .171.413h1.43v2.339c0 .133.109.242.242.242h1.29a.243.243 0 0 0 .242-.242Z"
+                        fill="#00A89F"></path>
+                    <path
+                        d="M11.887 13.339V11h1.43a.242.242 0 0 0 .17-.413l-2.316-2.305a.24.24 0 0 0-.34 0l-2.319 2.305a.242.242 0 0 0 .171.413h1.43v2.339c0 .133.109.242.242.242h1.29a.243.243 0 0 0 .242-.242Z"
+                        fill="#fff"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M0 8a8 8 0 0 1 15.993-.328 6.031 6.031 0 0 0-1.233-1.348 7.007 7.007 0 0 0-.412-1.18l-.773.387a.239.239 0 0 0-.043.028 5.96 5.96 0 0 0-1.012-.365l.099-.148a1.29 1.29 0 0 1 .496-.438l.741-.37a6.963 6.963 0 0 0-5.855-3.205H7.98l-.022.002 1.075 1.074c.195.195.302.455.302.73 0 .276-.108.535-.302.73l-.304.303a.775.775 0 0 1-.03 1.063l-.258.258a.77.77 0 0 1-.547.227h-.186l-.109.106.2.399a6.031 6.031 0 0 0-1.371 1.19l-.092-.08-.707.235.076.037c.142.072.295.122.452.15a6 6 0 0 0-.556.922 2.69 2.69 0 0 1-.358-.148l-.358-.18a.9.9 0 0 1 .118-1.661l1.006-.335c.234-.08.487-.067.71.021l-.128-.257a.769.769 0 0 1 .153-.902l.32-.31a.772.772 0 0 1 .539-.22h.184a.775.775 0 0 1 .03-1.063l.486-.485-1.671-1.67A6.986 6.986 0 0 0 1.485 5.55c.318.472.83 1.231 1.142 1.689.144.212.312.405.502.577.303.274.609.484.933.647.35.177.825.431 1.238.657-.11.336-.192.685-.242 1.044-.45-.248-1.045-.57-1.46-.78a5.127 5.127 0 0 1-1.134-.779c-.277-.249-.5-.505-.69-.785l-.642-.947c-.06.368-.1.742-.1 1.127 0 3.263 2.257 6.004 5.29 6.757.384.478.84.895 1.35 1.236A8 8 0 0 1 0 8Z"
+                        fill="#758099"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="cp">
+        <div class="cp-page">
+            @if (isLoading()) {
+            <div class="page-info-loading">
+                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                    width="1rem" height="1rem">
+                    <path
+                        d="M15.438 8.563c-0.311 0-0.563-0.252-0.563-0.563 0-0.928-0.181-1.828-0.541-2.677-0.365-0.85-0.862-1.575-1.473-2.186l-0-0c-0.61-0.612-1.336-1.11-2.142-1.456l-0.044-0.017c-0.847-0.358-1.747-0.539-2.675-0.539-0.311 0-0.563-0.252-0.563-0.563s0.252-0.563 0.563-0.563c1.080 0 2.128 0.211 3.114 0.63 0.953 0.402 1.808 0.98 2.542 1.714s1.311 1.591 1.714 2.542c0.417 0.986 0.628 2.034 0.628 3.114 0.002 0.311-0.25 0.563-0.561 0.563z">
+                        <animateTransform attributeName="transform" type="rotate" from="0 8 8" to="360 8 8" dur="1s"
+                            repeatCount="indefinite"></animateTransform>
+                    </path>
+                </svg>
+            </div>
+            } @else {
+            <div class="cp-page-title" [class.active]="page()?.Title===selectedItem()?.name"
+                [attr.item-type]="page()?.$type" (click)="onItemSelect(page()!.$type, page()!.Title, page()!.Id,0) ">
+                <span class="cp-page-icon">
+                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                        width="1em" height="1em">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M15 15H1V3h14v12zm1-13.857C16 .51 15.552 0 15 0H1C.448 0 0 .51 0 1.143v13.714C0 15.49.448 16 1 16h14c.552 0 1-.51 1-1.143V1.143zM12 9a4 4 0 10-8 0 4 4 0 008 0zm-1.504.94v.606c0 .404-.457.852-.912 1.089-.065.033-.115.034-.159.035-.103.001-.173.003-.317.416h-.14a5.294 5.294 0 00-.06-.674 4.294 4.294 0 01-.025-.18.599.599 0 00-.332-.477c-.354-.173-.486-.52-.539-.872-.02-.135-.005-.278.01-.42.008-.079.016-.158.018-.235.004-.166.003-.334.002-.507l-.001-.239.288.019c.288.018.584.036.88.06.046.003.1.035.13.073.07.083.138.168.206.254.118.147.236.295.364.432.07.076.204.131.308.13.208-.001.239.09.288.233.013.038.027.08.047.125.012.027-.008.051-.027.075-.014.02-.03.038-.03.057zM7.629 8.44c-.274-.312-.467-.596-.245-1.056.1-.208.204-.282.382-.318.12-.023.248-.023.371-.012.232.02.351-.091.443-.292a.863.863 0 01.26-.296c.12-.095.249-.179.384-.267.058-.038.118-.077.178-.118a1.925 1.925 0 01-.056-.044A.297.297 0 009.293 6c-1.055-.53-2.642-.27-3.49.57-.14.139-.141.334.018.457.154.12.23.265.223.459-.002.082-.002.166 0 .25v.12c.512.052.863.352 1.213.649.206.175.41.35.647.472l.033-.022.027-.018a5.532 5.532 0 01-.099-.157 2.433 2.433 0 00-.236-.339z">
+                        </path>
+                    </svg></span>
+                <span class="cp-page-name">{{ pageTitle() }}</span>
+            </div>
+            <div class="cp-page-regions">
+                @for (region of page()?.Regions; track region.RegionName; let idx=$index) {
+                <div class="cp-page-region">
+                    <div class="cp-page-region-title" [class.active]="region.RegionName===selectedItem()?.name"
+                        [attr.item-type]="region.$type"
+                        (click)="onItemSelect(region.$type, region.RegionName, region.RegionSchema.IdRef, idx)">
+                        <span class="cp-page-region-icon">
+                            <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                viewBox="0 0 16 16" width="1em" height="1em">
+                                <path
+                                    d="M16 12v2a2 2 0 01-1.85 1.995L14 16h-2v-2h2v-2h2zM2 12v2h2v2H2a2 2 0 01-1.995-1.85L0 14v-2h2zm8 2v2H6v-2h4zm6-8v4h-2V6h2zM2 6v4H0V6h2zm2-6v2H2v2H0V2A2 2 0 011.85.005L2 0h2zm10 0a2 2 0 011.995 1.85L16 2v2h-2V2h-2V0h2zm-4 0v2H6V0h4z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span class="cp-page-region-name">{{ region.RegionName }}</span>
+                        @if (region.Metadata.maxItems) {
+                        <span class="cp-page-region-constraint">({{ region.Metadata.maxItems }})</span>
+                        }
+                    </div>
+                    @if(region.Regions.length!==0){
+                    <app-region-tree-item [regions]="region.Regions" />
+                    }
+                    @for (component of region.ComponentPresentations; track component; let i=$index) {
+                    <div class="cp-page-components">
+                        <div class="cp-page-component" [class.active]="component.Component.Title===selectedItem()?.name"
+                            [attr.item-type]="component.$type"
+                            (click)="onItemSelect(component.$type, component.Component.Title,  component.Component.IdRef,  i)">
+                            <span class="cp-page-component-icon">
+                                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                    viewBox="0 0 16 16" width="1em" height="1em">
+                                    <path
+                                        d="M16 5v10.589a.421.421 0 0 1-.428.411H.428A.421.421 0 0 1 0 15.589V5h16zM.208 4L3.368.158A.433.433 0 0 1 3.702 0H12.3c.132 0 .253.058.335.158L15.796 4H.207z"
+                                        fill="#758099"></path>
+                                </svg>
+                            </span>
+                            <span class="cp-page-component-name">{{ component.Component.Title }}</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
+@if(showPageInfoModal()){
+<app-item-selector />
+}

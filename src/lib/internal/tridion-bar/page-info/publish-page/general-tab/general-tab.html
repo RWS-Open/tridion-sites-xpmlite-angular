@@ -1,0 +1,127 @@
+<div class="publishing-container">
+    <div class="general-tab-container">
+        <div class="target-types-container">
+            <div class="target-type">
+                <h6>Select one or more target types to publish to:</h6>
+                <table class="target-type-table">
+                    <thead>
+                        <tr>
+                            <th width="50"><input type="checkbox" [checked]="selectedTargetType().length"
+                                    (change)="toggleTargetTypeSelect($event)" /></th>
+                            <th>Target Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(target of targetTypes();track target.Id){
+                        <tr>
+                            <td>
+                                <input type="checkbox" [checked]="selectedTargetTypes().includes(target.Id)"
+                                    (change)="onTargetTypeSelect($event, target.Id)" />
+                            </td>
+                            <td>{{target?.Title}}</td>
+                        </tr>
+                        }
+                        @if(isTargetTypesLoading()){
+                        <tr>
+                            <td colspan="2" class="align-cell-center">
+                                <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                    viewBox="0 0 16 16" width="1rem" height="1rem">
+                                    <path
+                                        d="M15.438 8.563c-0.311 0-0.563-0.252-0.563-0.563 0-0.928-0.181-1.828-0.541-2.677-0.365-0.85-0.862-1.575-1.473-2.186l-0-0c-0.61-0.612-1.336-1.11-2.142-1.456l-0.044-0.017c-0.847-0.358-1.747-0.539-2.675-0.539-0.311 0-0.563-0.252-0.563-0.563s0.252-0.563 0.563-0.563c1.080 0 2.128 0.211 3.114 0.63 0.953 0.402 1.808 0.98 2.542 1.714s1.311 1.591 1.714 2.542c0.417 0.986 0.628 2.034 0.628 3.114 0.002 0.311-0.25 0.563-0.561 0.563z">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 8 8"
+                                            to="360 8 8" dur="1s" repeatCount="indefinite"></animateTransform>
+                                    </path>
+                                </svg>
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="deployment-options">
+                <div class="deployment-options-group">
+                    @for(deploymentOption of deploymentOptions();track deploymentOption.id){
+                    <div class="deployment-option">
+                        <input type="radio" [checked]="deploymentOption.value===selectedDeploymentOption()"
+                            name="deploymentOption" (change)="onDeploymentOptionSelect(deploymentOption.value)" />
+                        <label>
+                            {{deploymentOption.label}}
+                        </label>
+                    </div>
+                    }
+                    <div class="deployment-option">
+                        <input type="datetime-local" placeholder="Select date" [value]="selectedDeploymentDatetime()"
+                            (change)="onDeploymentDateChange($event)" [disabled]="scheduleDeployment()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="publishing-publication-list">
+            <div class="publication-list-container">
+                <div class="parent-publication">
+                    <span>Publish items in publications:</span>
+                    <div class="parent-publication-group">
+                        <input type="checkbox" id="parent-publication" [checked]="selectedParentPubliation()"
+                            (change)="onParentPublicationSelect($event, parentPublication()!.id)" />
+                        <label for="parent-publication">
+                            {{parentPublication()?.title}}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="child-publications">
+                    <table class="publication-list-table">
+                        <thead>
+                            <tr>
+                                <th width="50"><input type="checkbox" (change)="toggleAllPublicationSelect($event)"
+                                        [checked]="selectedChildPublications().length===childPublications().length" />
+                                </th>
+                                <th>Child Publication</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(publication of childPublications(); track publication.title){
+                            <tr>
+                                <td>
+                                    <input type="checkbox" [checked]="isSelected(publication.id)"
+                                        (change)="onChildPublicationSelect($event, publication.id)" />
+                                </td>
+                                <td>{{publication.title}}</td>
+                            </tr>
+                            }
+                            @if(isChildPublicationsLoading()){
+                            <tr>
+                                <td colspan="2" class="align-cell-center">
+                                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+                                        viewBox="0 0 16 16" width="1rem" height="1rem">
+                                        <path
+                                            d="M15.438 8.563c-0.311 0-0.563-0.252-0.563-0.563 0-0.928-0.181-1.828-0.541-2.677-0.365-0.85-0.862-1.575-1.473-2.186l-0-0c-0.61-0.612-1.336-1.11-2.142-1.456l-0.044-0.017c-0.847-0.358-1.747-0.539-2.675-0.539-0.311 0-0.563-0.252-0.563-0.563s0.252-0.563 0.563-0.563c1.080 0 2.128 0.211 3.114 0.63 0.953 0.402 1.808 0.98 2.542 1.714s1.311 1.591 1.714 2.542c0.417 0.986 0.628 2.034 0.628 3.114 0.002 0.311-0.25 0.563-0.561 0.563z">
+                                            <animateTransform attributeName="transform" type="rotate" from="0 8 8"
+                                                to="360 8 8" dur="1s" repeatCount="indefinite"></animateTransform>
+                                        </path>
+                                    </svg>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="publishing-options">
+                <div class="publishing-options-group">
+                    @for(publishingOption of publishingOptions();track publishingOption.id){
+                    <div class="publishing-option">
+                        <input type="radio" [checked]="publishingOption.value===selectedPublishingOption()"
+                            name="publishing" (change)="onPublishingOptionsSelect(publishingOption.value)" />
+                        <label>
+                            {{publishingOption.label}}
+                        </label>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

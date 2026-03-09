@@ -1,0 +1,154 @@
+@for (bannerComponent of components(); track bannerComponent.id) {
+  <headless-xpm-editor [tcmId]="'tcm:'+bannerComponent.publicationId+'-'+bannerComponent.itemId">
+    <section class="banner w-100 position-relative">
+      @for (item of bannerComponent.itemListElement; track item) {
+        <div>
+          <div>
+            <img
+              [src]="item.media.variants.edges[0].node.downloadUrl"
+              alt=""
+              class="img-fluid d-block w-100 banner-image-style"
+            />
+          </div>
+          <div
+            class="container-fluid position-absolute"
+            style="bottom: 50%; width: 100%; left: 50%; transform: translate(-50%, 50%)"
+          >
+            <div class="row align-items-center justify-content-start">
+              <div class="col-lg-5 ml-4 pl-4 text-center solar-banner mx-auto">
+                <h1
+                  class="h4 text-white banner-text text-uppercase position-relative animated fadeInUp"
+                >
+                  {{ item.subheading }}
+                </h1>
+                <a
+                  href="#lightbox"
+                  data-toggle="modal"
+                  class="btn btn-light mt-4 py-3 px-4 jmb-btn text-uppercase animated fadeInUp delay-1s"
+                
+                  >{{ item.link.linkText }}</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+  </headless-xpm-editor>
+  <div class="modal fade and carousel slide position-fixed" id="lightbox">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="carousel-1654" class="carousel slide h-100" data-ride="carousel">
+            <div class="carousel-inner h-100">
+              <div class="carousel-item active">
+                <div class="w-100">
+                  <img
+                    src="https://preview.tridiondemo.com/content/img/segment-marketo-contacts.png"
+                    alt=""
+                    class="w-100 animated fadeIn"
+                  />
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="w-100">
+                  <img
+                    src="https://preview.tridiondemo.com/content/img/see savings form.png"
+                    alt=""
+                    class="w-100 animated fadeIn"
+                  />
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="w-100">
+                  <img
+                    src="https://preview.tridiondemo.com/content/img/salesforce-crm.png"
+                    alt=""
+                    class="w-100 animated fadeIn"
+                  />
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel-1654" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel-1654" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-region="FindAnInstaller">
+    <div class="col-lg-3 text-center solar-installer ml-3 mr-4 p-0">
+        <div class="solar-installer-group">
+          <div class="solar-installer-map animated slideInUp">
+            <img src="https://preview.tridiondemo.com/content/img/map.png" class="img-fluid" />
+          </div>
+          <div class="solar-installer-form p-3">
+            <h4
+              class="m-0 text-center text-uppercase installer-heading text-white animated slideInRight"
+            >
+              Find An Installer
+            </h4>
+            <form
+              autocomplete="off"
+              action=""
+              method=""
+              class="installer-position installer-form pt-3"
+            >
+              <div class="form-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="fullname"
+                  autofill="false"
+                  aria-describedby="fullname"
+                  placeholder="Full Name"
+                  required=""
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  placeholder="Email"
+                  required=""
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="telephone"
+                  placeholder="Telephone Number"
+                  required=""
+                />
+              </div>
+              <div class="form-check text-left pb-2 privacy">
+                <input type="checkbox" class="form-check-input" id="privacy" />
+                <label class="form-check-label text-white" for="privacy"></label>
+                <span>Privacy</span>
+              </div>
+              <button
+                type="submit"
+                class="solar-installer-btn btn btn-light btn-lg btn-block py-3 text-uppercase"
+              >
+                Request Now
+              </button>
+            </form>
+          </div>
+        </div>
+    </div>
+  </div>
+}

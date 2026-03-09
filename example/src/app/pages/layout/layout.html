@@ -1,0 +1,11 @@
+<app-header></app-header>
+<headless-xpm-provider
+    [editorUrl]="editorUrl()"
+    [staging]="staging()"
+    [showToolbar]="showToolbar()"
+    [showPageEditorLink]="showPageEditorLink()"
+  >
+<router-outlet />
+</headless-xpm-provider>   
+<app-footer /> 
+<app-chatbot />

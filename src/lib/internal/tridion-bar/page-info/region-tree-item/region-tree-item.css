@@ -1,0 +1,51 @@
+.cp-page-title, .cp-page-region-title, .cp-page-component {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.cp-page-component{
+    padding-left: 85px;
+}
+
+.cp-page-region-title{
+    padding-left: 60px;
+    font-weight: 700;
+}
+
+.cp-page-title:hover, .cp-page-region-title:hover, .cp-page-component:hover {
+    background-color: color(srgb 0.46 0.5 0.6 / 0.07);
+}
+.cp-page-regions, .cp-page-region,.cp-page-components {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+
+.cp-page-region-icon, .cp-page-region-name, .cp-page-icon, .cp-page-name, .cp-page-component-icon, .cp-page-component-name, .cp-page-region-constraint{
+    display: flex;
+    cursor: pointer;
+}
+
+.cp-page-icon svg, .cp-page-region-icon svg{
+    color:#758099
+}
+
+.cp-page-region-title.active, .cp-page-component.active{
+    background-color:rgb(0 115 115 / 13%) !important
+}
+
+
+button.page-info-action-button[disabled], button.page-info-action-button[disabled]:hover{
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.page-info-loading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}

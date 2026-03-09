@@ -1,0 +1,131 @@
+.additional-settings{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.additional-options{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.additional-options-group{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.additional-options-heading{
+    display: flex;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.additional-option-item{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.additional-option-item label{
+    margin: 0;
+    font-size: 14px;
+}
+.publishing-priority-dropdown{
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+
+.publishing-priority-dropdown select{
+    border: none;
+    width: 200px;
+    border-radius: 5px;
+    padding: 5px;
+    outline: none;
+}
+
+.publishing-priority-dropdown select:disabled{
+    cursor:not-allowed;
+    background-color: #dee2e6;
+}
+
+
+.dropdown-container {
+  position: relative;
+  width: 200px;
+  font-family: sans-serif;
+  display: flex;
+  align-self: flex-end;
+}
+
+.dropdown-button {
+  width: 100%;
+  padding: 5px 15px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+.dropdown-button:disabled{
+    background: none;
+    cursor: not-allowed;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+  display: none; /* Hidden by default */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* Show class toggled by Angular */
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu.drop-up {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.dropdown-menu li {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.arrow {
+  transition: transform 0.2s;
+}
+
+.dropdown-button .arrow.up {
+    transform: rotate(180deg);
+}
+
+.dropdown-button:focus{
+    outline:none;
+}

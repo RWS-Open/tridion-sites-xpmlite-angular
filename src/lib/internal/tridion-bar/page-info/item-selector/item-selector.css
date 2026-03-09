@@ -1,0 +1,339 @@
+.item-selector-overlay {
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(93, 110, 127, .7);
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.item-selector-modal {
+    width: calc(100% - 200px);
+    height: calc(100vh - 150px);
+    background-color: #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-selector-modal-header,
+.item-selector-modal-footer {
+    padding: 15px;
+}
+
+.item-selector-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+}
+
+
+.item-selector-modal-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.item-selector-modal-sidebar {
+    width: 25%;
+    border-right: 1px solid #dee2e6;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.item-selector-modal-main {
+    background-color: #f1f2f5;
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px;
+}
+
+.item-selector-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #eee;
+    width: 100%;
+    padding: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.modal-header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.modal-footer-btn-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.modal-footer-btn-group button {
+    border: none;
+    font-size: 14px;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.modal-footer-btn-group button:hover {
+    background-color: #dee2e6;
+}
+
+.modal-footer-btn-group button:hover,
+.modal-footer-btn-group button:active,
+.modal-footer-btn-group button:focus {
+    outline: none;
+}
+
+.modal-footer-btn-group button[disabled],
+.modal-footer-btn-group button[disabled]:hover {
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Container to match Antd table wrapping */
+.item-selector-modal-main {
+    padding: 16px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+/* Header Styling */
+thead th {
+    background: #fafafa;
+    color: rgba(0, 0, 0, 0.88);
+    font-weight: 500;
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.3s ease;
+}
+
+/* Body Cell Styling */
+tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: rgba(0, 0, 0, 0.88);
+    transition: background 0.3s;
+}
+
+tbody tr td span svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Hover Effect */
+tbody tr:hover td {
+    background: #f5f5f5;
+}
+
+/* Last row shouldn't have a border if you want a clean finish */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+th:first-child,
+td:first-child {
+    width: 10px;
+}
+
+/* Optional: Column width adjustments */
+th:nth-child(2),
+td:nth-child(2) {
+    width: 40%;
+    /* Name column usually wider */
+}
+
+.status-tag {
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: #758099;
+    font-size: 16px;
+}
+
+.publicaton-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 5px;
+}
+
+.item-selector-modal-main table tbody tr th input[type='checkbox'],
+.item-selector-modal-main table tbody tr td input[type='checkbox'] {
+    height: 16px;
+    width: 16px;
+}
+
+.item-selector--current-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 10px;
+}
+
+.ellipsis {
+    display: inline-block;
+    max-width: 20vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+.dropdown-container {
+    position: relative;
+    width: 200px;
+    font-family: sans-serif;
+    display: flex;
+    align-self: flex-end;
+}
+
+.dropdown-button {
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    display: none;
+    /* Hidden by default */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+/* Show class toggled by Angular */
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu.drop-up {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.dropdown-menu li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f0f0f0;
+}
+
+.arrow {
+    transition: transform 0.2s;
+}
+
+.dropdown-button .arrow.up {
+    transform: rotate(180deg);
+}
+
+.dropdown-button:focus {
+    outline: none;
+}
+
+.constraints-block {
+    position: absolute;
+    z-index: 99;
+    bottom: 55px;
+    border: 1px solid #7f8c8d;
+    border-radius: 5px;
+}
+
+.constraints-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.constraints-items-allowed, .allowed-items {
+    font-weight: 700;
+}
+
+.constraints-group{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.constraints{
+    display: flex;
+    flex-direction: column; 
+    gap: 5px;
+}
+
+.constraints-region{
+    display:flex; 
+    flex-direction: row;
+    gap: 10px;
+}
+
+.constraints-schema, .constraints-component-template{
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+}
+
+.constraints-items-allowed:after {
+    content: "";
+    border-bottom: 1px solid rgb(227, 230, 235);
+    padding-top: 10px;
+    display: flex;
+}

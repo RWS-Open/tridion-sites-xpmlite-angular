@@ -1,0 +1,42 @@
+<section id="our-offerings" class="mx-auto" [attr.data-region]="region()?.name">
+  <div class="container-fluid">
+    <h6 class="text-center py-4 mb-3 mt-0 text-uppercase offerings-title position-relative">
+      Our Offerings
+    </h6>
+    <div class="row">
+      <div class="card-group w-100">
+        @for (productComponent of region()?.components; track productComponent.id; let idx=$index) {
+        <div class="card border-0 rounded-0" [attr.data-component]="productComponent.title">
+          <headless-xpm-editor [tcmId]="'tcm:' + productComponent.publicationId + '-' + productComponent.itemId">
+            <div class="card-hover">
+
+              <div>
+                <img class="hover" [src]="
+                      productComponent?.body?.[0]?.media?.variants?.edges?.[0]?.node?.downloadUrl
+                    " alt="" />
+              </div>
+
+              <h5 class="card-hover-title card-title text-uppercase m-0 py-3"
+                [attr.xpm-editable-field-name]="productComponent | fieldNamePipe : productComponent.headline"
+                [attr.xpm-editable-field-position]="idx">
+                {{ productComponent.headline }}
+              </h5>
+              <div class="card-hover-block">
+                <p class="card-text text-center"
+                  [attr.xpm-editable-field-name]="productComponent| fieldNamePipe:productComponent.introduction"
+                  [attr.xpm-editable-field-position]="idx">
+                  {{ productComponent?.introduction }}
+                </p>
+              </div>
+              <div class="card-hover-btn text-center">
+                <a [href]="productComponent.link?.externalLink" class="btn btn-success rounded-0 text-white">{{
+                  productComponent.link?.linkText }}</a>
+              </div>
+            </div>
+          </headless-xpm-editor>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

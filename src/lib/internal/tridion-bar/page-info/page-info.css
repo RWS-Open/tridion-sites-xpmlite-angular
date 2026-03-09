@@ -1,0 +1,134 @@
+.page-info-container {
+    position: fixed;
+    top: 0;
+    width: 360px;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 99;
+}
+
+.page-info-header {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+}
+
+.page-info-close {
+    display: flex;
+    color: #5e667a;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.page-info-close:hover {
+    background-color: rgb(227, 230, 235);
+}
+
+.page-info-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-end;
+    justify-content: end;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.page-info-action-button {
+    display: flex;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #eee;
+    cursor: pointer;
+}
+
+.page-info-action-button:hover {
+    background-color: rgb(200, 204, 214);
+}
+
+.page-info-action-button svg {
+    color: #5e667a;
+}
+
+.cp {
+    padding: 10px;
+}
+
+.cp-page {
+    border: 1px solid green;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-info-heading{
+    font-weight: 700;   
+}
+.cp-page-title{
+    padding:5px 10px;
+}
+.cp-page-title, .cp-page-region-title{
+    font-weight: bold; 
+}
+.cp-page-title, .cp-page-region-title, .cp-page-component {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.cp-page-component{
+    padding-left: 60px;
+}
+
+.cp-page-region-title{
+    padding-left: 35px;
+}
+
+.cp-page-title:hover, .cp-page-region-title:hover, .cp-page-component:hover {
+    background-color: color(srgb 0.46 0.5 0.6 / 0.07);
+}
+
+.cp-page-regions {
+    display: flex;
+    flex-direction: column;
+}
+
+.cp-page-region {
+    display: flex;
+    flex-direction: column;
+}
+
+.cp-page-components {
+    display: flex;
+    flex-direction: column;
+}
+
+.cp-page-region-icon, .cp-page-region-name, .cp-page-icon, .cp-page-name, .cp-page-component-icon, .cp-page-component-name, .cp-page-region-constraint{
+    display: flex;
+    cursor: pointer;
+}
+
+.cp-page-icon svg, .cp-page-region-icon svg{
+    color:#758099
+}
+
+.cp-page-region-title.active, .cp-page-component.active, .cp-page-title.active{
+    background-color:rgb(0 115 115 / 13%) !important
+}
+
+
+button.page-info-action-button[disabled], button.page-info-action-button[disabled]:hover{
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.page-info-loading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
