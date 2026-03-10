@@ -18,11 +18,39 @@ A lightweight Angular package that adds edit links to your components or pages, 
 ## 🔧 Configuration
 
 - Update the environment.ts and/or environment.prod.ts files with your Tridion Sites environment details.
+
+	```ts
+	  production: false,
+	  clientId:"",
+	  issuer:"https://domain.com/access-management/connect",
+	  openApiUrl:'https://domain.com/api/v3.0',
+	  redirectUri:window.location.origin,
+
+	  graphqlBaseUrl: 'https://domain.com:8081/cd/api',	// Content Delivery API endpoint
+	  experience_space_editor: "https://domain.com/ui/editor",	// Experience Space Editor URL
+	  staging: true,
+	  showToolbar: true,
+	  showPageEditorLink: true
+	```
 	
-	- apiUrl: https://domain.com/cd/api	// Content Delivery API endpoint
-	- experience_space_editor : https://domain/ui/editor	// Experience Space Editor URL
+- Allow Cors
+	
+	navigate to openapi folder and update the web.config to allow cors
+	
+		```xml
+		<corsConfigs>
+			<corsAllowlist>
+			  <!-- To enable CORS you can add multiple lines like the one below and put your custom web-site domain and port. -->
+			  <!-- <add origin="https://domain:port" /> -->
+			  <add origin="https://dxa.tridiondemo.com"/>
+			  <add origin="https://preview.tridiondemo.com"/>
+			  <add origin="http://localhost:4200"/>
+			</corsAllowlist>
+		  </corsConfigs>
+		```
 	
 🔑 Configuration Notes
+
 
 - apiUrl: Points to your Content Delivery (GraphQL/Content Service) endpoint used for fetching component/presentation data.
 
