@@ -13,16 +13,31 @@ export class InlineEditorService {
 
     private apiService = inject(XpmApiService)
 
-    private readonly _componentData = signal<ComponentData | null>(null);
+    private readonly _componentData = signal<ComponentData[]>([]);
     private readonly _componentCheckoutData = signal<any | null>(null);
+    private readonly _isEditorActive = signal(false);
 
     readonly componentData = this._componentData.asReadonly();
     readonly componentCheckoutData = this._componentCheckoutData.asReadonly();
+    readonly isEditorActive = this._isEditorActive.asReadonly()
+
+    updateEditorStatus(editorStatus:boolean){
+        this._isEditorActive.set(editorStatus)
+    }
 
     getItem(componentId: string) {
         const url = `/items/${componentId}?useDynamicVersion=true`;
-        this.apiService.getItems<any>(url).subscribe(res => {
-            this._componentData.set(res)
+        this.apiService.getItems<ComponentData>(url).subscribe(res => {
+            this._componentData.update((currentItems) => {
+                const index = currentItems.findIndex(item => item.Id===res.Id)
+                if(index!==-1){
+                    const updatedItems = [...currentItems];
+                    updatedItems[index] = res;
+                    return updatedItems;
+                }{
+                    return [...currentItems, res]
+                }
+            })
         })
     }
 

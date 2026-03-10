@@ -227,16 +227,6 @@ export class XpmPageInfoService {
         this._pageInfo.update(state => {
             if (!state) return state;
 
-            /* const updatedRegions = state.Regions.map(region => ({
-                ...region,
-                ComponentPresentations: region.ComponentPresentations.filter(
-                    (item, index) => {
-                        const filteredData = item.Component.IdRef === selectedId && index === position;
-                        return !filteredData
-                    }
-                )
-            })); */
-
             const processRegions = (regions: Region2[]): any => {
                 return regions.map((region: Region) => {
                     const updatedCps = region.ComponentPresentations?.filter((item, index) => !(item.Component.IdRef === selectedId && index === position))

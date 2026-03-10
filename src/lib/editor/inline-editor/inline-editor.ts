@@ -47,7 +47,9 @@ export class InlineEditor {
   }
 
   updateComponent() {
-    const primaryBlueprintItem = StringUtils.sanitizeIdentifier(this.componentData()?.BluePrintInfo.PrimaryBluePrintParentItem.IdRef as string);
+    const filterComponentData = this.componentData()?.filter(item => item.Id === this.tcmId())
+    if(!filterComponentData || !filterComponentData.length) return;
+    const primaryBlueprintItem = StringUtils.sanitizeIdentifier(filterComponentData[0]?.BluePrintInfo.PrimaryBluePrintParentItem.IdRef as string);
 
     this.inlineEditorService.checkoutItem<CheckoutData>(primaryBlueprintItem as string).pipe(
       concatMap((checkoutResponse: CheckoutData): Observable<CheckoutData> => {

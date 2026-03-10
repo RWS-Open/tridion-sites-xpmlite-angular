@@ -211,7 +211,7 @@ export class App {
 
 Looking for a full implementation? Check out our reference apps:
 
-- [Example Angular Headless App](https://github.com/RWS-Open/tridion-sites-xpmminimal-angular)
+- [Example Angular Headless App](https://github.com/RWS-Open/tridion-sites-xpmlite-angular)
 
 ## 🛠 Best Practices
 

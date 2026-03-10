@@ -1,6 +1,6 @@
 {
   "name": "headless-xpm-angular",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0"
@@ -17,7 +17,7 @@
   "style": "styles/headless-xpm.css",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RWS-Open/tridion-sites-xpmminimal-angular.git"
+    "url": "git+https://github.com/RWS-Open/tridion-sites-xpmlite-angular.git"
   },
   "keywords": [
     "Tridion Sites",

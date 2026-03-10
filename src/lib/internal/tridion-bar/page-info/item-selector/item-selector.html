@@ -204,7 +204,6 @@
             </div>
             }
             <div class="modal-footer-btn-group">
-                <!-- [disabled]="selectedComponent().Title===''"  -->
                 <button (click)="showConstraint()" (blur)="hideConstraints()">Show Constraints</button>
                 <button (click)="updatePage()" [disabled]="selectedComponent()===null && selectedComponentTemplate()===null">Insert</button>
                 <button (click)="toggleItemSelector()">Done</button>

@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 
 import { XpmStateService } from "../internal/state/headless-xpm-state.service";
 import { HeadlessXpmProviderState } from "../internal/state/headless-xpm-provider.state";
-import { fromEvent, Subscription } from "rxjs";
+import { fromEvent, Subscription, throttleTime } from "rxjs";
 import { InlineEditor } from "./inline-editor/inline-editor";
 import { AuthService } from "../internal/state/headless-xpm-auth.service";
 import { InlineEditorService } from "../internal/state/headless-xpm-inline-editor.service";
@@ -75,57 +75,68 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
     vcr!: ViewContainerRef;
 
     inputValue = signal<string>("")
-    private editorRef?: ComponentRef<InlineEditor>;
-    private targetElement: HTMLElement | null = null;
-
+    private activeElements = new Set<HTMLElement>();
     ngOnInit(): void {
-        this.dblClickSub = fromEvent<MouseEvent>(this.el.nativeElement, 'dblclick').subscribe((event) => {
-            if (!this.isAuthenticated()) {
-                this.cleanup()
-                console.warn('Action restricted: Authentication is required.');
+        this.dblClickSub = fromEvent<MouseEvent>(this.el.nativeElement, 'dblclick').pipe(
+            throttleTime(500)
+        ).subscribe((event) => {
+            const editableEl = event.target as HTMLElement;
+            if (!editableEl.hasAttribute('xpm-editable-field-name') || this.activeElements.has(editableEl)) {
                 return;
             }
-            const target = event.target as HTMLElement;
-            const fieldName = target?.getAttribute('xpm-editable-field-name') as string;
-            const fieldPosition = target?.getAttribute('xpm-editable-field-position') as string;
+            event.stopPropagation();
+            if (!this.isAuthenticated()) {
+                this.cleanup()
+                //console.warn('Action restricted: Authentication is required.');
+                return;
+            }
 
-            if (target.closest('.xpm-edit-container')) return;
+            if (!editableEl) {
+                return;
+            }
+            const fieldName = editableEl?.getAttribute('xpm-editable-field-name') as string;
+            const fieldPosition = editableEl?.getAttribute('xpm-editable-field-position') as string;
 
-            this.targetElement = target;
-
-            const parent = target.parentElement;
+            const parent = editableEl.parentElement;
             if (!parent) return;
 
-            const currentValue = target.textContent?.trim() || '';
-
-            // Destroy previous editor
-            this.editorRef?.destroy();
-
-            // Hide original element
-            this.renderer.setStyle(target, 'display', 'none');
+            const currentValue = editableEl.textContent?.trim() || '';
 
             // Create editor
-            this.editorRef = this.vcr.createComponent(InlineEditor);
+            const currentEditorRef = this.vcr.createComponent(InlineEditor);
+            this.activeElements.add(editableEl);
+            // Hide original element
+            this.renderer.setStyle(editableEl, 'display', 'none');
 
-            const instance = this.editorRef.instance;
+            const instance = currentEditorRef.instance;
             instance.inputValue.set(currentValue);
             instance.tcmId.set(this.tcmId())
             instance.fieldName.set(fieldName)
             instance.fieldPosition.set(fieldPosition)
 
-            instance.saveChanges = (val: string) => {
-                target.textContent = val;
-                this.cleanup();
+            const closeEditor = () => {
+                this.renderer.removeStyle(editableEl, "display")
+                this.activeElements.delete(editableEl);
+                currentEditorRef.destroy()
+
+                if (this.activeElements.size === 0) {
+                    this.inlineEditorService.updateEditorStatus(false)
+                }
+            }
+
+            instance.saveChanges = (value: string) => {
+                editableEl.textContent = value;
+                closeEditor();
             };
 
             instance.cancelChanges = () => {
-                this.cleanup();
+                closeEditor();
             };
 
             // Move editor to correct DOM position
             parent.insertBefore(
-                this.editorRef.location.nativeElement,
-                target.nextSibling
+                currentEditorRef.location.nativeElement,
+                editableEl.nextSibling
             );
             this.xpmEdit()
         });
@@ -138,16 +149,24 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
     }
 
     private cleanup() {
-        if (!this.targetElement) return;
+        this._isXpmEditingEnabled.set(false)
+        this.inlineEditorService.updateEditorStatus(false)
+        this.activeElements.forEach(el => {
+            this.renderer.removeStyle(el, 'display');
+        });
+        this.activeElements.clear();
+        if(this.vcr){
+            this.vcr.clear();
+        }
+        //this.renderer.removeStyle(this.targetElement, 'display');
+        //this.editorRef?.destroy();
 
-        this.renderer.removeStyle(this.targetElement, 'display');
-        this.editorRef?.destroy();
-
-        this.targetElement = null;
+        // this.targetElement = null;
     }
     ngOnDestroy(): void {
         if (this.dblClickSub) {
-            this.dblClickSub.unsubscribe()
+            this.dblClickSub.unsubscribe();
+            this.cleanup();
         }
     }
 

@@ -82,23 +82,6 @@ export class TridionBar implements OnDestroy {
         this.xpmPageInfoService.togglePageInfo(false)
     }
 
-    /* ngOnInit(): void {
-        this.routerSub = this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-        ).subscribe(() => {
-
-            runInInjectionContext(this.envInjector, () => {
-                afterNextRender(() => {
-                    const tcmId = this.xpmPageInfoService.getPageId();
-
-                    if (tcmId) {
-                        this.xpmPageInfoService.getPageInfo(tcmId);
-                        this.xpmPageInfoService.updatePageId(tcmId);
-                    }
-                });
-            });
-        });
-    } */
     ngOnInit(): void {
         this.routerSub = this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))

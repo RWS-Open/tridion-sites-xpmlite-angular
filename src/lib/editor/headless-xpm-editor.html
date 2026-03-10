@@ -1,10 +1,15 @@
+<ng-template #projectedTemplate>
+  <ng-content></ng-content>
+</ng-template>
+
+@if(isAuthenticated()){
 <div [style]="containerStyles().styleString" [ngStyle]="containerStyles().styleObject" [ngClass]="[
     'headlessXpmRegion',
     customClasses,
     shouldShowRegionHover() ? 'headlessXpmRegion-hover' : ''
   ]">
-  <!--  [style.border]="hover || toggleXpm ? '2px solid #17c13e' : '1px solid transparent'" -->
-  @if(shouldShowEditIcon() && editUrl() && isAuthenticated()){
+
+  @if(shouldShowEditIcon() && editUrl()){
   <a [attr.href]="editUrl()" [style]="linkStyles().styleString" [ngStyle]="linkStyles().styleObject"
     [class.pagePosition]="isPage()" class="headlessXpmIcon" target="_blank" title="Edit in Experience sapce"
     rel="noopener noreferrer">
@@ -16,7 +21,11 @@
     </svg>
   </a>
   }
-  <div class="headlessXpmContent" #hostContainer [style]="contentStyles().styleString" [ngStyle]="contentStyles().styleObject">
-    <ng-content></ng-content>
+  <div class="headlessXpmContent" #hostContainer [style]="contentStyles().styleString"
+    [ngStyle]="contentStyles().styleObject">
+    <ng-container *ngTemplateOutlet="projectedTemplate"></ng-container>
   </div>
 </div>
+} @else{
+<ng-container *ngTemplateOutlet="projectedTemplate"></ng-container>
+}
