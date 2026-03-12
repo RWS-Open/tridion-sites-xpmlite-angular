@@ -184,7 +184,7 @@ export class App {
 
 ### Configure CORS
 
-   - Navigate to %Tridion_Home%/Openapi folder and update web.config to allow CORS
+   - Navigate to %Tridion_Home%\Openapi folder and update web.config to allow CORS
 
    
 		```xml
