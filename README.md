@@ -29,7 +29,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
 
 ## 🔧 Basic Usage
 
-1. Configure Access Management
+###. Configure Access Management
 
    Before using the library, you must register your application in the Tridion Access Management:
 
@@ -56,7 +56,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
          - Click Save to apply the changes.
 
 
-2. Configure Auth Settings
+###. Configure Auth Settings
 
    - Import the interceptor and provider function into your application configuration.
 
@@ -80,7 +80,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
       };
    ```
 
-3. Configure the Provider
+###. Configure the Provider
 
    Wrap your application structure (usually in app.component.ts or your main layout) with the provider.
 
@@ -107,7 +107,7 @@ export class App {
 }
 ```
 
-4. Configure the Editor
+###. Configure the Editor
 
    - Use the editor component to wrap specific UI elements you want to make editable.
 
@@ -134,7 +134,7 @@ export class App {
          }
       ```
 
-   - Enable inline editing
+### Enable inline editing
 
       Use the FieldNamePipe to retrieve the key name of the editable field.
 
@@ -172,7 +172,7 @@ export class App {
          }
          </headless-xpm-editor>
 
-5) Configure the Highlight Area
+### Configure the Highlight Area
 
    - Update the top-level div with the region name using the data-region attribute, as shown below:
 
@@ -182,6 +182,20 @@ export class App {
 
       <div [attr.data-component]="componentTitle">
 
+### Configure CORS
+
+   - Navigate to Openapi folder and update web.config to allow CORS
+
+   
+		```xml
+		<corsConfigs>
+			<corsAllowlist>
+			  <!-- To enable CORS you can add multiple lines like the one below and put your custom web-site domain and port. -->
+			  <!-- <add origin="https://domain:port" /> -->
+			  <add origin="http://localhost:4200"/>
+			</corsAllowlist>
+		  </corsConfigs>
+		```
 
 ## 🧩 API Reference
 

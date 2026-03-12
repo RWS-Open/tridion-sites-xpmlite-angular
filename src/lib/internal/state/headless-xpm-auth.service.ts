@@ -1,5 +1,5 @@
 import { BehaviorSubject, catchError, from, map, Observable } from "rxjs";
-import { inject, Injectable, signal } from "@angular/core";
+import { effect, inject, Injectable, signal, untracked } from "@angular/core";
 
 import { PkceUtils } from "../utils/pkce.util";
 import { AUTH_CONFIG, AuthConfig, INTERNAL_SCOPES } from "../../auth-config";
@@ -27,14 +27,25 @@ export class AuthService {
         return Math.random().toString(36).substring(2, 15);
     }
 
-    setAuthenticated(status: boolean) {
+    /* setAuthenticated(status: boolean) {
         this._isAuthenticated.set(status);
         this.authStatus$.next(status);
+    } */
+
+    private updateAuthState(status: boolean) {
+        this._isAuthenticated.set(status);
+        this.authStatus$.next(status)
     }
 
     constructor() {
         this.restoreSession();
         this.authenticate();
+        effect(() => {
+            const token = this._authToken();
+            if(token?.expires_in && token?.expires_in <= Date.now()){
+                untracked(() => this.logout())
+            }
+        })
     }
 
     private restoreSession() {
@@ -53,10 +64,7 @@ export class AuthService {
             this.updateAuthState(false)
         }
     }
-    private updateAuthState(status: boolean) {
-        this._isAuthenticated.set(status);
-        this.authStatus$.next(status)
-    }
+
     processTokenResponse(tokens: AuthResponse): void {
         const expires_at = Date.now() + (tokens.expires_in * 1000) - 30000;
         const authData = {
@@ -88,11 +96,8 @@ export class AuthService {
 
     getAccessToken(): string | null {
         const token = this._authToken();
-        if (!token) {
-            return null
-        }
-        if (token?.expires_in && token?.expires_in <= Date.now()) {
-            this.logout();
+        if (!token || (token.expires_in && token.expires_in <= Date.now())) {
+            //this.logout();
             return null;
         }
         return token.access_token
@@ -190,7 +195,7 @@ export class AuthService {
         sessionStorage.removeItem(this.RETURN_URL)
         this._authToken.set(null);
         this.updateAuthState(false);
-        this.setAuthenticated(false)
+        //this.setAuthenticated(false)
         //this.authStatus$.next(false);
         // this._isAuthenticated.set(false)
         // this.hasAuthenticated()

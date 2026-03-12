@@ -104,3 +104,6 @@
     outline: none;
 }
 
+.xpm-login{
+  transform: rotate(180deg);
+}
