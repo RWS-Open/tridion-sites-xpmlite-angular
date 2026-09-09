@@ -1,19 +1,21 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, DOCUMENT, EnvironmentInjector, inject, input, OnDestroy, OnInit, output, runInInjectionContext, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Router, NavigationEnd } from '@angular/router';
+import { afterNextRender, ChangeDetectionStrategy, Component, DOCUMENT, EnvironmentInjector, inject, input, OnDestroy, output, runInInjectionContext, signal } from "@angular/core";
+import { NavigationEnd, Router } from '@angular/router';
+import { AuthService } from "../state/headless-xpm-auth.service";
 import { XpmPageInfoService } from "../state/headless-xpm-page-info.service";
 import { PublishService } from "../state/headless-xpm-publish.service";
 import { XpmStateService } from "../state/headless-xpm-state.service";
-import { AuthService } from "../state/headless-xpm-auth.service";
 
-import { PublishPageModal } from "./page-info/publish-page/publish-page-modal";
-import { PageInfo } from "./page-info/page-info";
+import { filter, Subscription } from "rxjs";
+import { HeadlessXpmPageCreationService } from "../state/headless-xpm-page-creation.service";
 import { StringUtils } from "../utils/StringUtils";
-import { filter, startWith, Subscription } from "rxjs";
+import { PageCreation } from "./page-creation/page-creation";
+import { PageInfo } from "./page-info/page-info";
+import { PublishPageModal } from "./page-info/publish-page/publish-page-modal";
 
 @Component({
     selector: "app-tridion-bar",
-    imports: [CommonModule, PageInfo, PublishPageModal],
+    imports: [CommonModule, PageInfo, PublishPageModal, PageCreation],
     templateUrl: "./tridion-bar.html",
     styleUrl: './tridion-bar.css',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -37,11 +39,13 @@ export class TridionBar implements OnDestroy {
     private authService = inject(AuthService)
     private xpmPageInfoService = inject(XpmPageInfoService)
     private publishService = inject(PublishService)
+    private pageCreationService = inject(HeadlessXpmPageCreationService)
 
     readonly isAuthenticated = this.authService.isAuthenticated
     readonly showPageEditMode = this.xpmState.isPageEnabled
     readonly showPublishModal = this.publishService.showPublishModal
     readonly showPageInfo = this.xpmPageInfoService.showPageInfo;
+    readonly showPageCreationModal = this.pageCreationService.showPageCreationModal
 
     onUpdateXpm(): void {
         this.updateXpmMode.emit()
@@ -68,6 +72,10 @@ export class TridionBar implements OnDestroy {
         }
     }
 
+    togglePageCreation(){
+        this.pageCreationService.togglePageCreationModal()
+    }
+
     togglePublishingModal() {
         this.publishService.togglePublishModal()
     }
@@ -83,20 +91,24 @@ export class TridionBar implements OnDestroy {
     }
 
     ngOnInit(): void {
-        this.routerSub = this.router.events
-            .pipe(filter(event => event instanceof NavigationEnd))
-            .subscribe(() => {
+        if (this.isAuthenticated()) {
+            this.routerSub = this.router.events
+                .pipe(filter(event => event instanceof NavigationEnd))
+                .subscribe(() => {
 
-                runInInjectionContext(this.envInjector, () => {
-                    afterNextRender(() => {
-                        this.waitForPageId();
+                    runInInjectionContext(this.envInjector, () => {
+                        afterNextRender(() => {
+                            if (this.isAuthenticated()) {
+                                this.getPageInfoByPageId();
+                            }
+                        });
                     });
-                });
 
-            });
+                });
+        }
     }
 
-    private waitForPageId() {
+    private getPageInfoByPageId() {
         const observer = new MutationObserver(() => {
             const tcmId = this.xpmPageInfoService.getPageId();
             if (tcmId) {
@@ -107,9 +119,9 @@ export class TridionBar implements OnDestroy {
         });
 
         observer.observe(this.document.body, {
-            childList:true,
-            subtree:true,
-            attributes:true
+            childList: true,
+            subtree: true,
+            attributes: true
         })
     }
     ngOnDestroy(): void {

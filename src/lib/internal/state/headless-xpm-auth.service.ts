@@ -1,8 +1,9 @@
-import { BehaviorSubject, catchError, from, map, Observable } from "rxjs";
 import { effect, inject, Injectable, signal, untracked } from "@angular/core";
+import { BehaviorSubject, catchError, from, map, Observable } from "rxjs";
 
-import { PkceUtils } from "../utils/pkce.util";
+import { HttpBackend, HttpClient } from "@angular/common/http";
 import { AUTH_CONFIG, AuthConfig, INTERNAL_SCOPES } from "../../auth-config";
+import { PkceUtils } from "../utils/pkce.util";
 import { AUTH_TOKEN_KEY, AuthResponse } from "./headless-xpm-page.model";
 @Injectable({
     providedIn: "root"
@@ -12,6 +13,7 @@ export class AuthService {
     private readonly TOKEN_KEY = AUTH_TOKEN_KEY.TOKEN_KEY;
     private readonly RETURN_URL = AUTH_TOKEN_KEY.RETURN_URL;
     private readonly AUTH_VERIFIER = AUTH_TOKEN_KEY.AUTH_VERIFIER;
+    private readonly httpClient: HttpClient;
 
     private readonly _isAuthenticated = signal<boolean>(false)
     private readonly _authToken = signal<AuthResponse | null>(null)
@@ -37,12 +39,13 @@ export class AuthService {
         this.authStatus$.next(status)
     }
 
-    constructor() {
+    constructor(private handler: HttpBackend) {
+        this.httpClient = new HttpClient(handler);
         this.restoreSession();
         this.authenticate();
         effect(() => {
             const token = this._authToken();
-            if(token?.expires_in && token?.expires_in <= Date.now()){
+            if (token?.expires_in && token?.expires_in <= Date.now()) {
                 untracked(() => this.logout())
             }
         })
@@ -116,16 +119,14 @@ export class AuthService {
         })
 
         return from(
-            fetch(`${this.config.issuer}/token`, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body
-            })
-                .then(response => response.json())  // Handle response as JSON
-                .then(refreshToken => {
-                    this.processTokenResponse(refreshToken);  // Process token on success
-                    return refreshToken;  // Return the refreshed token as an AuthResponse
+            this.httpClient.post<AuthResponse>(`${this.config.issuer}/token`, body.toString(), {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).pipe(
+                map((refreshToken) => {
+                    this.processTokenResponse(refreshToken);
+                    return refreshToken;
                 })
+            )
         ).pipe(
             map((refreshToken) => {
                 return refreshToken
@@ -156,18 +157,15 @@ export class AuthService {
             code_verifier: verifier || ""
         })
 
-        const response = await fetch(`${this.config.issuer}/token`, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: body
-        })
-        const authResponse = await response.json()
-        if (!response.ok) {
-            console.error("Server Error:", authResponse);
-            throw new Error("Server Error", authResponse)
+        this.httpClient.post<AuthResponse>(`${this.config.issuer}/token`, body.toString(), {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).subscribe(
+            (refreshToken) => {
+                this.processTokenResponse(refreshToken);
+                //return refreshToken;
+            }
+        )
 
-        }
-        this.processTokenResponse(authResponse)
     }
 
     async login() {
@@ -195,9 +193,5 @@ export class AuthService {
         sessionStorage.removeItem(this.RETURN_URL)
         this._authToken.set(null);
         this.updateAuthState(false);
-        //this.setAuthenticated(false)
-        //this.authStatus$.next(false);
-        // this._isAuthenticated.set(false)
-        // this.hasAuthenticated()
     }
 }

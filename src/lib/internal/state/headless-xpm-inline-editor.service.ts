@@ -1,6 +1,7 @@
-import { Observable } from "rxjs";
 import { inject, Injectable, signal } from "@angular/core";
+import { Observable } from "rxjs";
 
+import { CheckoutData } from "../../editor/inline-editor/inline-editor.model";
 import { XpmApiService } from "./headless-xpm-api.service";
 import { ComponentData } from "./headless-xpm-inline-editor.model";
 
@@ -14,7 +15,7 @@ export class InlineEditorService {
     private apiService = inject(XpmApiService)
 
     private readonly _componentData = signal<ComponentData[]>([]);
-    private readonly _componentCheckoutData = signal<any | null>(null);
+    private readonly _componentCheckoutData = signal<CheckoutData | null>(null);
     private readonly _isEditorActive = signal(false);
 
     readonly componentData = this._componentData.asReadonly();

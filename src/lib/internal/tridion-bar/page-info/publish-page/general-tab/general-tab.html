@@ -6,9 +6,11 @@
                 <table class="target-type-table">
                     <thead>
                         <tr>
-                            <th width="50"><input type="checkbox" [checked]="selectedTargetType().length"
-                                    (change)="toggleTargetTypeSelect($event)" /></th>
-                            <th>Target Type</th>
+                            <th width="50">
+                                <input type="checkbox" [checked]="selectedTargetType().length"
+                                    (change)="toggleTargetTypeSelect($event)" id="target-types-select-all" />
+                            </th>
+                            <th><label for="target-types-select-all">Target Type</label></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -16,9 +18,9 @@
                         <tr>
                             <td>
                                 <input type="checkbox" [checked]="selectedTargetTypes().includes(target.Id)"
-                                    (change)="onTargetTypeSelect($event, target.Id)" />
+                                    (change)="onTargetTypeSelect($event, target.Id)" id="target-type-{{target.Id}}" />
                             </td>
-                            <td>{{target?.Title}}</td>
+                            <td> <label for="target-type-{{target.Id}}">{{target?.Title}}</label></td>
                         </tr>
                         }
                         @if(isTargetTypesLoading()){
@@ -44,8 +46,9 @@
                     @for(deploymentOption of deploymentOptions();track deploymentOption.id){
                     <div class="deployment-option">
                         <input type="radio" [checked]="deploymentOption.value===selectedDeploymentOption()"
-                            name="deploymentOption" (change)="onDeploymentOptionSelect(deploymentOption.value)" />
-                        <label>
+                            name="deploymentOption" (change)="onDeploymentOptionSelect(deploymentOption.value)"
+                            id="deploymentOption-{{deploymentOption.id}}" />
+                        <label for="deploymentOption-{{deploymentOption.id}}">
                             {{deploymentOption.label}}
                         </label>
                     </div>
@@ -74,10 +77,12 @@
                     <table class="publication-list-table">
                         <thead>
                             <tr>
-                                <th width="50"><input type="checkbox" (change)="toggleAllPublicationSelect($event)"
-                                        [checked]="selectedChildPublications().length===childPublications().length" />
+                                <th width="50">
+                                    <input type="checkbox" (change)="toggleAllPublicationSelect($event)"
+                                        [checked]="selectedChildPublications().length===childPublications().length"
+                                        id="child-publications" />
                                 </th>
-                                <th>Child Publication</th>
+                                <th><label for="child-publications">Child Publication</label></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,9 +90,12 @@
                             <tr>
                                 <td>
                                     <input type="checkbox" [checked]="isSelected(publication.id)"
-                                        (change)="onChildPublicationSelect($event, publication.id)" />
+                                        (change)="onChildPublicationSelect($event, publication.id)"
+                                        id="child-publication-{{publication.id}}" />
                                 </td>
-                                <td>{{publication.title}}</td>
+                                <td>
+                                    <label for="child-publication-{{publication.id}}">{{publication.title}}</label>
+                                </td>
                             </tr>
                             }
                             @if(isChildPublicationsLoading()){
@@ -114,8 +122,9 @@
                     @for(publishingOption of publishingOptions();track publishingOption.id){
                     <div class="publishing-option">
                         <input type="radio" [checked]="publishingOption.value===selectedPublishingOption()"
-                            name="publishing" (change)="onPublishingOptionsSelect(publishingOption.value)" />
-                        <label>
+                            name="publishing" (change)="onPublishingOptionsSelect(publishingOption.value)"
+                            id="publishing-option-{{publishingOption.id}}" />
+                        <label for="publishing-option-{{publishingOption.id}}">
                             {{publishingOption.label}}
                         </label>
                     </div>

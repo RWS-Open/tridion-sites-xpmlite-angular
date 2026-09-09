@@ -1,5 +1,5 @@
 <div class="pageroot" [attr.data-page]="pageTcmId()">
-
+<headless-xpm-editor [tcmId]="pageId()" [isPage]="true">
     @for (region of typedPageData()?.data?.typedPage?.regions; track region.name) {
     @switch (region.name) {
     @case ('Banner') {
@@ -16,4 +16,6 @@
     }
     }
     }
+    </headless-xpm-editor>
+
 </div>

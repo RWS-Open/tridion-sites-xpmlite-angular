@@ -1,0 +1,29 @@
+<app-modal [title]="modalTitle" [okButtonText]="okButtonText" [cancelButtonText]="cancelButtonText"
+  [isOpen]="showModal()" [showOkButton]="false" [showCancelButton]="false" (okButton)="saveItem()"
+  (closeButton)="toggleModal()" [template]="pageCreationTemplate">
+</app-modal>
+
+<ng-template #pageCreationTemplate>
+  <app-steps>
+    <app-step label="Page Types">
+      <ng-template #stepsTemplate>
+        <app-page-types />
+      </ng-template>
+    </app-step>
+    <app-step label="Page Details">
+      <ng-template #stepsTemplate>
+        <app-page-details />
+      </ng-template>
+    </app-step>
+    <app-step label="Save Page">
+      <ng-template #stepsTemplate>
+        <app-save-page />
+      </ng-template>
+    </app-step>
+    <app-step label="Publish Page">
+      <ng-template #stepsTemplate>
+        <app-publish-new-page />
+      </ng-template>
+    </app-step>
+  </app-steps>
+</ng-template>

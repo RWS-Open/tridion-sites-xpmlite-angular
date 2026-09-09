@@ -42,7 +42,7 @@ export class OrganizationalTreeNode {
         }
     }
 
-    toggle() {
+   /*  toggle() {
         this.node.expanded = !this.node.expanded;
 
         if (this.node.expanded && !this.node.children?.length) {
@@ -64,7 +64,7 @@ export class OrganizationalTreeNode {
                 this.xpmPageInfoService.updateNodeChildren(this.node.id, mappedChildren);
             })
         }
-    }
+    } */
 }
 
 

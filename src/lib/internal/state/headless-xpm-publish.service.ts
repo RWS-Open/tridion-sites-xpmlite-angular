@@ -1,12 +1,11 @@
 import { effect, inject, Injectable, signal } from "@angular/core";
-import { XpmPageInfoService } from "./headless-xpm-page-info.service";
 import { concatMap, map, Observable } from "rxjs";
 
 import { ChildPublicationsData, ChildPublicationsProps, PubishableTargets } from "../tridion-bar/page-info/publish-page/publish-page-model";
-import { XpmApiService } from "./headless-xpm-api.service";
-import { PublishBody } from "./headless-xpm-publish-model";
-import { AuthService } from "./headless-xpm-auth.service";
 import { StringUtils } from "../utils/StringUtils";
+import { XpmApiService } from "./headless-xpm-api.service";
+import { AuthService } from "./headless-xpm-auth.service";
+import { PublishBody } from "./headless-xpm-publish-model";
 
 @Injectable({
     providedIn: "root"
@@ -53,7 +52,6 @@ export class PublishService {
     readonly isChilPublicationLoading = this._isChilPublicationLoading.asReadonly();
     readonly isTargetTypesLoading = this._isTargetTypesLoading.asReadonly();
 
-    private xpmPageInfoService = inject(XpmPageInfoService);
     private apiService = inject(XpmApiService)
     private authService = inject(AuthService)
 
@@ -61,9 +59,9 @@ export class PublishService {
         this._showPublishModal.update(value => !value)
     }
 
-    getPagePublishInfo() {
+    getPagePublishInfo(publicationId:string) {
         
-        const publicationId = StringUtils.sanitizeIdentifier(this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
+        //const publicationId = StringUtils.sanitizeIdentifier(this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
         if (!publicationId) return;
 
         const url = `/items/${publicationId}?useDynamicVersion=true`;
@@ -101,7 +99,9 @@ export class PublishService {
                 this._childPublications.set(publishingData)
                 //console.log("Mapped Child Publication data", publishingData);
             },
-            error: (err) => console.error(err)
+            error: (err) => {
+                console.error(err)
+            }
         });
     }
 
@@ -176,16 +176,16 @@ export class PublishService {
         this._selectedPublishingPriority.set(priority)
     }
 
-    publishPage() {
+    publishPage(pageId:string) {
         const url = '/items/publish';
         const publishBody: PublishBody = {
-            Ids:[this.xpmPageInfoService.pageId() as string],
+            Ids:[pageId as string],
             TargetIdsOrPurposes: this._selectedTargetType(),
             PublishInstruction: {
                 ResolveInstruction: {
                     IncludeChildPublications: false,
                     IncludeComponentLinks: this.selectedDependentItems(),
-                    IncludeCurrentPublication: this.selectedParentPublication() ? true : false,
+                    IncludeCurrentPublication: this.selectedParentPublication()!==null ? true : false,
                     IncludeDynamicVersion: !this.selectedItemsInProgress(),
                     IncludeWorkflow: this.selectedOverridePublishPriority(),
                     PublishInChildPublications: this.selectedChildPublication(),

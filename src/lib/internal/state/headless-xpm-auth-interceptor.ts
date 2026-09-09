@@ -1,6 +1,6 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 import { AuthService } from './headless-xpm-auth.service';
 
@@ -8,10 +8,16 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
     const authService = inject(AuthService);
     const token = authService.getAccessToken()
 
+    if (req.url.includes('/token') || req.url.includes('/authorize')) {
+        return next(req);
+    }
+
     let authReq = req;
     if(token){
         authReq = req.clone({
-            setHeaders:{Authorization:`Bearer ${token}`}
+            setHeaders:{
+                Authorization:`Bearer ${token}`,
+            }
         })
     }
 

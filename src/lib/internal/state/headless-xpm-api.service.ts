@@ -1,10 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { inject, Injectable } from "@angular/core";
+import { catchError, Observable, switchMap, throwError } from "rxjs";
 
+import { AUTH_CONFIG, AuthConfig } from "../../auth-config";
 import { AuthService } from "./headless-xpm-auth.service";
 import { AuthResponse } from "./headless-xpm-page.model";
-import { AUTH_CONFIG, AuthConfig } from "../../auth-config";
 
 @Injectable({
     providedIn: "root"
@@ -16,18 +16,18 @@ export class XpmApiService {
     private readonly config: AuthConfig = inject(AUTH_CONFIG)
     
     private readonly baseUrl = this.config.baseUrl;
-    private readonly token = this.authService.getAccessToken()
+    //private readonly token = this.authService.getAccessToken()
 
     private getRequestHeaders(): HttpHeaders {
         return new HttpHeaders({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${this.token}`
+            Authorization: `Bearer ${this.authService.getAccessToken()}`,
         });
     }
 
-    getItem<T, TBody>(url: string, body: TBody): Observable<T> {
+    postItem<T, TBody>(url: string, body: TBody): Observable<T> {
         return this.httpClient.post<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error:HttpErrorResponse) => this.handleHttpError<T>(error, () => this.getItem(url, body)))
+            catchError((error:HttpErrorResponse) => this.handleHttpError<T>(error, () => this.postItem(url, body)))
         )
     }
 

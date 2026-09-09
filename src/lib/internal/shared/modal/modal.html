@@ -1,0 +1,42 @@
+@if (isOpen) {
+
+<div class="item-selector-overlay">
+    <div class="item-selector-modal">
+        <div class="item-selector-modal-header">
+            <div class="item-selector-modal-header-title">
+                {{ title }}
+            </div>
+            <div class="item-selector-modal-close" (click)="closeButton.emit()">
+                <div class="modal-header-actions">
+                    <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"
+                        width="1em" height="1em">
+                        <path
+                            d="M9.697 8l5.128-5.128 1.058-1.057a.4.4 0 0 0 0-.566L14.75.117a.4.4 0 0 0-.566 0L8 6.303 1.814.117a.4.4 0 0 0-.565 0L.117 1.248a.4.4 0 0 0 0 .566L6.303 8 .117 14.185a.4.4 0 0 0 0 .566l1.131 1.132a.4.4 0 0 0 .566 0L8 9.697l5.128 5.128 1.057 1.058a.4.4 0 0 0 .566 0l1.132-1.132a.4.4 0 0 0 0-.566L9.697 8z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        @if (template) {
+        <div class="item-selector-modal-body">
+            <div class="item-selector-modal-main">
+                <ng-container *ngTemplateOutlet="template"></ng-container>
+            </div>
+        </div>
+        }
+        @if(showOkButton || showCancelButton){
+        <div class="item-selector-modal-footer">
+            <div class="modal-footer-btn-group">
+                @if (showOkButton) {
+                <button (click)="okButton.emit()" [disabled]="disableOkButton">{{ okButtonText }}</button>
+                }
+                @if (showCancelButton) {
+                <button (click)="closeButton.emit()">{{ cancelButtonText }}</button>
+                }
+            </div>
+        </div>
+        }
+
+    </div>
+</div>
+}

@@ -36,20 +36,15 @@ A lightweight Angular package that adds edit links to your components or pages, 
 ### 🔑 Configuration Notes
 
 - clientId : Can be created by registering the new application in Access Management
-
 - Issuer: Authorization URL
-
 - openApiUrl : Open API URL
-
 - redirectUri : Redirect URI
-
 - graphqlBaseUrl: Points to your Content Delivery (GraphQL/Content Service) endpoint used for fetching component/presentation data.
-
 - experience_space_editor: Points to Experience Space and enables the "Edit in XPM" links inside the UI.
 		
 ### Configure CORS
 	
-navigate to openapi folder and update the web.config to allow cors
+Navigate to %Tridion_Home%\Openapi folder and update web.config to allow CORS
 
 ```xml
 	<corsConfigs>
@@ -101,3 +96,12 @@ Follow the steps below to edit and insert components using the Experience Space.
 - Select Publication Target Type and Publications.
 - Click Publish
 - Wait for Publisher to Publish the page
+
+### Creating a Page Using Page Types
+
+- **Initiate page creation:** Click the **Create New Page** icon.
+- **Choose a Page Types:** From the modal window showing pre-configured Page Types, select your desired type and click Next.
+- **Set page details:** Enter the **Page Name** and **Filename**, then click **Show Page Info.**
+- **Confirm components:** The existing components will automatically cloned;
+- **Save the page**: Click Save.
+- **Publish:** Select your target publication and publishing destination, then publish the page.

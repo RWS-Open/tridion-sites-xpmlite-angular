@@ -1,14 +1,14 @@
 import { DOCUMENT, effect, inject, Injectable, signal } from "@angular/core";
-import { concatMap, map, shareReplay, tap } from "rxjs";
+import { concatMap, map, tap } from "rxjs";
 
 import { ComponentTemplateLinks, OrganizationalItemData, TreeNode } from "../tridion-bar/page-info/item-selector/item-selector.model";
 import { ComponentPresentationConstraint, NestedRegion2, PageSchema } from "./headless-xpm-page-schema.model";
-import { SelectedPageItem } from "./headless-xpm-publications.model";
 import { PageData, Region, Region2 } from "./headless-xpm-page.model";
+import { SelectedPageItem } from "./headless-xpm-publications.model";
 
+import { StringUtils } from "../utils/StringUtils";
 import { XpmApiService } from "./headless-xpm-api.service";
 import { AuthService } from "./headless-xpm-auth.service";
-import { StringUtils } from "../utils/StringUtils";
 import { XpmHighlighter } from "./headless-xpm-highlighter";
 
 @Injectable({
@@ -72,7 +72,6 @@ export class XpmPageInfoService {
         const url = `/items/${orgItemId}/items?useDynamicVersion=false&recursive=false&details=Contentless`
         return this.apiService.getItems<OrganizationalItemData[]>(url).pipe(
             map(response => {
-
                 return response.filter(item => item.$type === "Folder" || item.$type === "Component")
             }),
             tap((filteredData) => {

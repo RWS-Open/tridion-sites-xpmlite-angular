@@ -10,6 +10,8 @@ A lightweight Angular package that adds edit links to your components or pages, 
 
 - Publish page to Publications.
 
+- Create new page.
+
 - Opens Tridion Experience Space (XPM) directly to the associated item (Page or Component)
 
 - Works in staging environments only (as required by XPM)
@@ -29,7 +31,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
 
 ## 🔧 Basic Usage
 
-###. Configure Access Management
+### Configure Access Management
 
    Before using the library, you must register your application in the Tridion Access Management:
 
@@ -56,7 +58,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
          - Click Save to apply the changes.
 
 
-###. Configure Auth Settings
+### Configure Auth Settings
 
    - Import the interceptor and provider function into your application configuration.
 
@@ -80,34 +82,34 @@ A lightweight Angular package that adds edit links to your components or pages, 
       };
    ```
 
-###. Configure the Provider
+### Configure the Provider
 
    Wrap your application structure (usually in app.component.ts or your main layout) with the provider.
 
-```ts
-import { HeadlessXpmProvider } from 'headless-xpm-angular';
+   ```ts
+      import { HeadlessXpmProvider } from 'headless-xpm-angular';
 
-@Component({
-  standalone: true,
-  selector: 'app-root',
-  imports: [RouterOutlet, HeadlessXpmProvider],
-  templateUrl: `
-            <headless-xpm-provider 
-               [editorUrl]="'https://domain.com/ui/editor'"
-               [staging]="true" 
-               [showToolbar]="true" 
-               [showPageEditorLink]="true"
-            >
-            <router-outlet></router-outlet>
-         </headless-xpm-provider>
-      `,
-})
-export class App {
-   tcmId = 'tcm:1-123-64';
-}
-```
+      @Component({
+      standalone: true,
+      selector: 'app-root',
+      imports: [RouterOutlet, HeadlessXpmProvider],
+      templateUrl: `
+                  <headless-xpm-provider 
+                     [editorUrl]="'https://domain.com/ui/editor'"
+                     [staging]="true" 
+                     [showToolbar]="true" 
+                     [showPageEditorLink]="true"
+                  >
+                  <router-outlet></router-outlet>
+               </headless-xpm-provider>
+            `,
+      })
+      export class App {
+         tcmId = 'tcm:1-123-64';
+      }
+   ```
 
-###. Configure the Editor
+### Configure the Editor
 
    - Use the editor component to wrap specific UI elements you want to make editable.
 
@@ -136,16 +138,16 @@ export class App {
 
 ### Enable inline editing
 
-      Use the FieldNamePipe to retrieve the key name of the editable field.
+   Use the FieldNamePipe to retrieve the key name of the editable field.
 
-      ```ts
+   ```ts
          import { HeadlessXpmEditor, FieldNamePipe } from 'headless-xpm-angular';
 
          @Component({
             selector: 'app-banner',
             imports: [HeadlessXpmEditor, FieldNamePipe],
             templateUrl: `
-               <headless-xpm-editor [tcmId]="tcmid">   
+               <headless-xpm-editor [tcmId]="tcmid()">   
                   <h1 [attr.xpm-editable-field-name]="componentData | fieldNamePipe:componentData.headline">
                      {{ componentData.headline }}
                   </h1>
@@ -157,11 +159,12 @@ export class App {
             tcmid = signal("tcmid")
             componentData = signal<any>();
          }
-      ```
+   ```
 
-      To update the list items, insert the index position of each item as shown below:
+   To update the list items, insert the index position of each item as shown below:
 
-         <headless-xpm-editor [tcmId]="tcmid">   
+   ```html
+         <headless-xpm-editor [tcmId]="tcmid()">   
          @for (item of componentData.itemListElement; track item.id; let idx=$index) {
             <h1 
                [attr.xpm-editable-field-name]="componentData | fieldNamePipe:componentData.headline"
@@ -171,16 +174,27 @@ export class App {
             </h1>
          }
          </headless-xpm-editor>
+   ```
 
 ### Configure the Highlight Area
 
+   - Update Parent div of the page with data-page attribute
+
+   ```html
+      <div class="page" [attr.data-page]="pageId">
+   ```
+
    - Update the top-level div with the region name using the data-region attribute, as shown below:
 
-      <div [attr.data-region]="regionName">
+     ```html
+       <div [attr.data-region]="regionName">
+     ```
 
    - Update the top-level component div with the data-component attribute for component highlighting:
 
+      ```html
       <div [attr.data-component]="componentTitle">
+      ```
 
 ### Configure CORS
 
@@ -225,7 +239,7 @@ export class App {
 
 Looking for a full implementation? Check out our reference apps:
 
-- [Example Angular Headless App](https://github.com/RWS-Open/tridion-sites-xpmlite-angular)
+- [Example Angular Headless App](https://github.com/RWS-Open/tridion-sites-xpmlite-angular/tree/main/example)
 
 ## 🛠 Best Practices
 

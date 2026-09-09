@@ -6,7 +6,7 @@ export interface CheckoutData {
   ApprovalStatus: ApprovalStatus;
   BluePrintInfo: BluePrintInfo;
   ComponentType: string;
-  Content: Content;
+  Content: CheckoutContent;
   DynamicVersionInfo: DynamicVersionInfo;
   ExtensionProperties: ExtensionProperties;
   IsBasedOnMandatorySchema: boolean;
@@ -105,10 +105,11 @@ interface Revisor {
   Description: string;
 }
 
-export interface Content {
+export interface CheckoutContent {
   '$type': string;
   headline: string;
-  itemListElement: ItemListElement[];
+  //itemListElement: ItemListElement[];
+  [key: string]: unknown;
 }
 
 interface ItemListElement {
