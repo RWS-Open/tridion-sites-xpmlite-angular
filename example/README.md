@@ -71,7 +71,37 @@ Follow the steps below to edit and insert components using the Experience Space.
 - Ensure your Experience Space is accessible.
 - Login to access the Content manager api's
 
+### Steps to Create Page Types for Page Creation
 
+- Create the container Structure Group:
+
+	- Inside the **Home** Structure Group, create a new Structure Group named **_Page Types**.
+
+- Open the Structure Group:
+
+	- In the Classic Content Explorer, navigate to and open the newly created _Page Types Structure Group.
+
+- Initiate page creation:
+
+	- Click **New Page** in the ribbon or context menu.
+
+- Define page properties:
+
+	- Enter the Name and File Name.
+	- Select the appropriate Page Template and Page Schema to associate with the page.
+	
+- Enable Page Type:
+
+	- Check the box labeled Use this Page as a Page Type.
+
+- Add default components:
+
+	- Switch to the **Design** tab to add any pre-configured components that should appear on pages created from this page type.
+		
+- Save:
+
+	- Click Save and Close.
+		
 ### Editing Components
 
 - Double-click the text that is configured for inline editing.
