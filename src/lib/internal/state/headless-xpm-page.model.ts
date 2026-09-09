@@ -92,10 +92,10 @@ export interface Region2 {
 
 export interface Region {
   '$type': string;
-  ComponentPresentations: any[];
+  ComponentPresentations: ComponentPresentation[];
   Metadata: ExtensionProperties;
   RegionName: string;
-  Regions: any[];
+  Regions: Region[];
   RegionSchema: ApprovalStatus;
 }
 

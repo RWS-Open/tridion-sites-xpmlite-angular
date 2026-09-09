@@ -1,0 +1,101 @@
+.steps-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.step-item {
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px
+}
+
+.step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-item.active .step-circle {
+    background-color: #007373;
+    color: #ffffff;
+}
+
+.step-item.completed .step-circle {
+    background-color: #d5e9e2;
+    color: #ffffff;
+}
+
+.step-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.steps-body {
+    padding: 16px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    max-height: calc(100% - 100px);
+    overflow-y: auto;
+    height: 100%;
+    /*  display: flex;
+    align-items: center;    
+    justify-content: center;
+    min-height: calc(100% - 100px);
+    flex-direction: row; */
+}
+
+.steps-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.steps-actions button {
+    padding: 6px 16px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 5px;
+    background-color: #007373;
+    border: 1px solid #7f8c8d;
+}
+
+.step-actions-btn {
+    display: flex;
+    gap: 8px;
+}
+
+.step-actions-btn button:disabled {
+    background-color: #e9ecef;
+    border: 1px solid #7f8c8d;
+    cursor: not-allowed;
+    color: #171a1f
+}
+
+.step-error span{
+    color: #ff0000;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    border: 1px solid #ff0000;
+    max-width: 90%;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+button.step-actions-btn-previous{
+    background-color: #e9ecef !important;
+    color: #171a1f !important;
+}

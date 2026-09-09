@@ -20,11 +20,11 @@
     flex-direction: column;
     justify-content: space-between;
     width: 50%;
-    height: calc(100vh - 300px);
+    /* //height: calc(100vh - 300px); */
     border-right: 1px solid #dee2e6;
     padding-right: 16px;
     padding-top: 10px;
-    gap: 50px;
+    /* gap: 50px; */
 }
 
 .publishing-publication-list {
@@ -32,10 +32,10 @@
     flex-direction: column;
     justify-content: space-between;
     width: 50%;
-    height: calc(100vh - 300px);
+  /*   height: calc(100vh - 300px); */
     padding-left: 16px;
     padding-top: 10px;
-    gap: 50px;
+   /*  gap: 50px; */
 }
 
 .deployment-options {
@@ -108,11 +108,10 @@
 
 .parent-publication-group {
     display: flex;
-    gap: 45px;
+    gap: 35px;
     align-items: center;
     margin-left: 4px;
 }
-
 
 .child-publications table thead th,
 .target-type table thead th,
@@ -130,6 +129,14 @@
 .child-publications table tbody tr,
 .target-type table tbody tr {
     border-bottom: 1px solid #eee;
+}
+
+.child-publications table tbody tr td label,
+.target-type table tbody tr td label, 
+.child-publications table thead tr th label,
+.target-type table thead tr th label {
+    cursor: pointer;
+   margin-bottom: 0;
 }
 
 table {

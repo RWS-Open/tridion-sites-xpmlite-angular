@@ -1,0 +1,81 @@
+<!-- Step Header -->
+<div class="steps-header">
+    @for (step of steps; track $index; let i = $index) {
+    <!-- <div class="step-item" [class.active]="i === activeIndex" [class.completed]="isCompleted(i)"
+        [class.disabled]="step.disabled" 
+        > -->
+    <div class="step-item" [class.active]="$index === activeIndex" [class.completed]="$index < activeIndex">
+        <!--  (click)="selectStep(i)" -->
+        <div class="step-circle">
+            @if (isCompleted($index)) {
+            <svg viewBox="64 64 896 896" focusable="false" data-icon="check" width="1em" height="1em"
+                fill="currentColor" aria-hidden="true" color="#93b39a">
+                <path
+                    d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 00-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z">
+                </path>
+            </svg>
+            } @else {
+            {{ $index + 1 }}
+            }
+        </div>
+
+        <div class="step-label">
+            {{ step.label }}
+        </div>
+    </div>
+    }
+</div>
+
+<!-- Step Content -->
+<div class="steps-body">
+    @if (steps && steps.length > 0) {
+    @let activeStep = steps.toArray()[activeIndex];
+    @if (activeStep && activeStep.template) {
+    <ng-container [ngTemplateOutlet]="activeStep.template"></ng-container>
+    }
+    }
+</div>
+
+<!-- Navigation -->
+<!-- <div class="steps-actions">
+    <button (click)="previous()" [disabled]="activeIndex === 0">
+        Previous
+    </button>
+
+    <button (click)="next()" [disabled]="activeIndex === steps.length - 1">
+        Next
+    </button>
+</div> -->
+
+<!-- Projected content -->
+<!-- <ng-content></ng-content> -->
+
+<div class="steps-actions">
+
+    <div class="step-error">
+        @if(stepError()!==null){
+        <span [title]="stepError()">Error: {{stepError()}}</span>
+        }
+    </div>
+
+    <div class="step-actions-btn">
+        <button 
+            class="step-actions-btn-previous"
+            (click)="stepperService.requestPrev()"
+            [disabled]="activeIndex===steps.length || !stepperService.canPrev() || stepperService.isLoading()">
+            @if(stepperService.isLoading()){
+            <span class="loader"></span>
+            }
+            {{prevLabel()}}
+        </button>
+        <button 
+            class="step-actions-btn-next"
+            (click)="stepperService.requestNext()"
+            [disabled]="!stepperService.canNext() || stepperService.isLoading()">
+            @if(stepperService.isLoading()){
+            <span class="loader"></span>
+            }
+            {{stepperService.isLoading() ? 'Processing...' : nextLabel()}}
+        </button>
+    </div>
+</div>

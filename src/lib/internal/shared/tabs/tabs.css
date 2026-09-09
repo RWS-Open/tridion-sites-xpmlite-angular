@@ -1,0 +1,21 @@
+.tab-header {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab-header button {
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.tab-header button.active {
+  border-bottom: 2px solid #1976d2;
+  font-weight: bold;
+}
+
+.tab-body {
+  padding: 12px;
+}

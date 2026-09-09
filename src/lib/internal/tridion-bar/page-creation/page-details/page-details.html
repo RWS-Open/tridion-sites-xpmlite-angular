@@ -1,0 +1,30 @@
+<form [formGroup]="pageDetailsForm" (ngSubmit)="onSubmit()">
+    <div class="xpm-form-group">
+        <label for="name">Name <span class="form-group-input-required">*</span></label>
+        <input id="name" formControlName="name" class="xpm-form-control" placeholder="Enter page name" />
+        @if(pageDetailsForm.get('name')?.invalid && pageDetailsForm.get('name')?.touched) {
+        <div class="validation-error">Page name is required.</div>
+        }
+    </div>
+
+    <div class="xpm-form-group">
+        <label for="fileName">File Name <span class="form-group-input-required">*</span></label>
+        <input id="fileName" formControlName="filename" class="xpm-form-control" placeholder="Enter file name" />
+        @if(pageDetailsForm.get('filename')?.invalid && pageDetailsForm.get('filename')?.touched) {
+        <div class="validation-error">File name is required.</div>
+        }
+    </div>
+    <div class="xpm-form-group">
+        <label for="pageType">Page Type</label>
+        <input id="pageType" formControlName="pageType" class="xpm-form-control" readonly />
+    </div>
+    <div class="xpm-form-group">
+        <label for="pageTemplate">Page Template</label>
+        <input id="pageTemplate" formControlName="template" class="xpm-form-control" readonly />
+    </div>
+
+    <div class="xpm-form-group">
+        <label for="pageSchema">Page Schema</label>
+        <input id="pageSchema" formControlName="schema" class="xpm-form-control" readonly />
+    </div>
+</form>

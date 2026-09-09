@@ -52,7 +52,7 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
         const path = this.isPage() ? 'page' : 'component';
         return `${editorUrl}/${path}?item=${tcmId}`;
     });
-    readonly isAuthenticated = computed(() => this.authService.getAccessToken())
+    readonly isAuthenticated = computed(() => !!this.authService.getAccessToken())
     readonly showXpm = computed(() => this.providerState?.staging() && (this.xpmState.isXpmEnabled() || !this.providerState.shouldShowToolbar()))
     readonly showPageXpm = computed(() => this.providerState?.staging() && (this.xpmState.isPageEnabled() || !this.providerState.shouldShowToolbar()))
     readonly shouldShowEditIcon = computed(() => this.isPage() ? this.showPageXpm() : this.showXpm());

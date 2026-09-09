@@ -26,8 +26,7 @@
       <button (click)="signin()" class="headlessXpmBarButton xpm-login" title="Sign in">
         <!-- <span style="font-size: 14px;">Sign in</span> -->
         <svg width="1rem" height="1rem" color="#fff" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-          class="lucide lucide-log-in-icon lucide-log-in">
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="m10 17 5-5-5-5" />
           <path d="M15 12H3" />
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -66,6 +65,16 @@
           </path>
         </svg>
       </button>
+      <button class="headlessXpmBarButton" (click)="togglePageCreation()" title="Create New Page">
+        <svg width="24" height="24" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+          <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+          <path d="M9 15h6" />
+          <path d="M12 18v-6" />
+        </svg>
+      </button>
       <button class="headlessXpmBarButton" (click)="togglePublishingModal()" title="Publish">
         <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16" width="1em"
           height="1em">
@@ -91,4 +100,7 @@
 }
 @if(showPublishModal()){
 <app-publish-page-modal />
+}
+@if(showPageCreationModal()){
+<app-page-creation />
 }

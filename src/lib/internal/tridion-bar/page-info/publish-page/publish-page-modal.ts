@@ -1,18 +1,19 @@
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 
-import { PublishTabs } from "./publish-tabs/publish-tabs";
-import { GeneralTab } from "./general-tab/general-tab";
-import { AdditionalSettingsTab } from "./additional-settings-tab/additional-settings-tab";
-import { PublishItemsTab } from "./publish-items-tab/publish-items-tab";
-import { PublishTab } from "./publish-tabs/publish-tab/publish-tab";
-import { PublishService } from "../../../state/headless-xpm-publish.service";
+import { tap } from "rxjs";
+import { HeadlessXpmModal } from "../../../shared/modal/modal";
 import { XpmPageInfoService } from "../../../state/headless-xpm-page-info.service";
-import { switchMap, tap } from "rxjs";
 import { PageData } from "../../../state/headless-xpm-page.model";
+import { PublishService } from "../../../state/headless-xpm-publish.service";
+import { StringUtils } from "../../../utils/StringUtils";
+import { AdditionalSettingsTab } from "./additional-settings-tab/additional-settings-tab";
+import { GeneralTab } from "./general-tab/general-tab";
+import { PublishTab } from "./publish-tabs/publish-tab/publish-tab";
+import { PublishTabs } from "./publish-tabs/publish-tabs";
 
 @Component({
     selector: 'app-publish-page-modal',
-    imports: [PublishTabs, PublishTab],
+    imports: [PublishTabs, PublishTab, HeadlessXpmModal],
     templateUrl: "./publish-page-modal.html",
     styleUrl: "./publish-page-modal.css",
 })
@@ -26,11 +27,12 @@ export class PublishPageModal implements OnInit {
     private readonly _isPublishing = signal<boolean>(false)
 
     readonly isPublishing = this._isPublishing.asReadonly()
-
-    targetTypeSelected = computed(() => this.publishService.selectedTargetType().length)
-    selectedChildPublications = computed(() => this.publishService.selectedChildPublication().length)
-    selectedParentPublication = computed(() => this.publishService.selectedParentPublication())
-
+    readonly publicationId = computed(() =>  this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
+    readonly targetTypeSelected = computed(() => this.publishService.selectedTargetType().length)
+    readonly selectedChildPublications = computed(() => this.publishService.selectedChildPublication().length)
+    readonly selectedParentPublication = computed(() => this.publishService.selectedParentPublication())
+    readonly showPublishModal = this.publishService.showPublishModal
+    
     togglePublishingModal() {
         this.publishService.togglePublishModal()
     }
@@ -44,7 +46,8 @@ export class PublishPageModal implements OnInit {
     }
     onPublishPage() {
         this._isPublishing.set(true)
-        this.publishService.publishPage().subscribe(res => {
+        const pageId= this.xpmPageInfoService.pageId()
+        this.publishService.publishPage(pageId as string).subscribe(res => {
             this.publishService.togglePublishModal()
             this._isPublishing.set(false)
         })
@@ -52,7 +55,8 @@ export class PublishPageModal implements OnInit {
 
     ngOnInit(): void {
         if (this.xpmPageInfoService.pageId() !== null && this.xpmPageInfoService.pageInfo() !== null) {
-            this.publishService.getPagePublishInfo()
+            const pubId = StringUtils.sanitizeIdentifier(this.publicationId())
+            this.publishService.getPagePublishInfo(pubId)
         } else {
             const id = this.xpmPageInfoService.getPageId()
             if (id) {
@@ -60,9 +64,9 @@ export class PublishPageModal implements OnInit {
                     tap((response:PageData) => {
                         this.xpmPageInfoService.updatePageInfo(response)
                     })
-
                 ).subscribe(res => {
-                    this.publishService.getPagePublishInfo()
+                    const pubId = StringUtils.sanitizeIdentifier(res.BluePrintInfo.OwningRepository.IdRef) 
+                    this.publishService.getPagePublishInfo(pubId)
                 })
             }
         }

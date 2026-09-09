@@ -58,7 +58,7 @@
 }
 
 .cp-page {
-    border: 1px solid green;
+    border: 1px solid #007373;
     border-radius: 5px;
     display: flex;
     flex-direction: column;

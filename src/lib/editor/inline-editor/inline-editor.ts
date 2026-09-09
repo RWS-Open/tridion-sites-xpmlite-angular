@@ -3,7 +3,7 @@ import { concatMap, Observable } from "rxjs";
 
 import { InlineEditorService } from "../../internal/state/headless-xpm-inline-editor.service";
 import { StringUtils } from "../../internal/utils/StringUtils";
-import { CheckoutData } from "./inline-editor.model";
+import { CheckoutContent, CheckoutData } from "./inline-editor.model";
 
 @Component({
   selector: "app-inline-editor",
@@ -57,7 +57,7 @@ export class InlineEditor {
         const fieldPosition = this.fieldPosition()
         const updateValue = this.inputValue();
         const checkoutId = StringUtils.sanitizeIdentifier(checkoutResponse.Id)
-        const content = checkoutResponse.Content as any;
+        const content = checkoutResponse.Content as CheckoutContent;
         this.updateNestedData(content, field, updateValue, fieldPosition);
         return this.inlineEditorService.saveItem(checkoutId, checkoutResponse).pipe(
           concatMap((updateResponse) => {
@@ -73,7 +73,7 @@ export class InlineEditor {
 
   }
 
-  updateNestedData(obj: any, targetKey: string, updateValue: string, fieldPosition: string | number): boolean {
+  updateNestedData(obj:CheckoutContent, targetKey: string, updateValue: string, fieldPosition: string | number): boolean {
 
     if (!obj || typeof obj !== 'object') return false;
 
@@ -99,13 +99,13 @@ export class InlineEditor {
         }
 
         for (const item of value) {
-          if (this.updateNestedData(item, targetKey, updateValue, fieldPosition)) {
+          if (this.updateNestedData(item as CheckoutContent, targetKey, updateValue, fieldPosition)) {
             return true;
           }
         }
       }
       else if (typeof value === 'object' && value !== null) {
-        if (this.updateNestedData(value, targetKey, updateValue, fieldPosition)) {
+        if (this.updateNestedData(value as CheckoutContent, targetKey, updateValue, fieldPosition)) {
           return true;
         }
       }

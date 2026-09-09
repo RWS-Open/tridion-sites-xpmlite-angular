@@ -1,0 +1,76 @@
+.page-info-container {
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+}
+
+.cp {
+    padding: 10px;
+}
+
+.cp-page {
+    border: 1px solid #007373;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cp-page-title {
+    padding: 5px 10px;
+}
+
+.cp-page-title,
+.cp-page-region-title {
+    font-weight: bold;
+}
+
+.cp-page-title,
+.cp-page-region-title,
+.cp-page-component {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px;
+}
+
+.cp-page-title:hover,
+.cp-page-region-title:hover,
+.cp-page-component:hover {
+    background-color: color(srgb 0.46 0.5 0.6 / 0.07);
+}
+
+.cp-page-region-icon,
+.cp-page-region-name,
+.cp-page-icon,
+.cp-page-name,
+.cp-page-component-icon,
+.cp-page-component-name,
+.cp-page-region-constraint {
+    display: flex;
+    cursor: pointer;
+}
+
+.cp-page-icon svg,
+.cp-page-region-icon svg {
+    color: #758099
+}
+
+.cp-page-regions {
+    display: flex;
+    flex-direction: column;
+    padding: 2px 5px;
+}
+
+
+.page-info-loading,
+.page-info-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.page-info-error {
+    color: #ff0000;
+}

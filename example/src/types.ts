@@ -100,3 +100,4 @@ interface Link {
   internalLink: null;
   alternateText: string;
 }
+

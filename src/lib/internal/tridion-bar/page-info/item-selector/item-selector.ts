@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { DatePipe, NgStyle } from "@angular/common";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { map } from "rxjs";
 
 import { XpmPageInfoService } from "../../../state/headless-xpm-page-info.service";
 
-import { ComponentTemplateLinks } from "./item-selector.model";
 import { PageData } from "../../../state/headless-xpm-page.model";
 import { StringUtils } from "../../../utils/StringUtils";
+import { ComponentTemplateLinks } from "./item-selector.model";
 import { OrganizationalTreeNode } from "./organizational-tree-node/organizational-tree-node";
 
 @Component({
@@ -25,6 +25,7 @@ export class ItemSelector implements OnInit {
     isOpen = signal<boolean>(false);
     isDropUp = signal(false);
     toggleConstraints = signal<boolean>(false)
+    isPublicationLoading = signal<boolean>(false)
 
     selectedComponentTemplate = signal<ComponentTemplateLinks | null>(null);
     selectedComponent = signal<ComponentTemplateLinks | null>(null)
@@ -139,7 +140,10 @@ export class ItemSelector implements OnInit {
         const id = this.organizationItemId();
         if (id) {
             //this.xpmPageInfoService.getPageSchema();
-            this.xpmPageInfoService.getOrganizationalItems(id as string).subscribe();
+            this.isPublicationLoading.set(true)
+            this.xpmPageInfoService.getOrganizationalItems(id as string).subscribe(res => {
+                this.isPublicationLoading.set(false)
+            });
         }
     }
 }

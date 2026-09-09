@@ -4,12 +4,13 @@ import { Banner } from "./banner/banner";
 import { Product } from "./product/product";
 import { Campaign } from "./campaign/campaign";
 import { Newsroom } from "./newsroom/newsroom";
+import { HeadlessXpmEditor } from "headless-xpm-angular";
 
 @Component({
     selector: "app-home",
     styleUrl: "./home.css",
     templateUrl: "./home.html",
-    imports: [Banner, Product, Campaign, Newsroom]
+    imports: [Banner, Product, Campaign, Newsroom, HeadlessXpmEditor]
 })
 
 export class Home {
