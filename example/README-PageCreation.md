@@ -1,12 +1,14 @@
 # XPMLITE Example APP Setup
 
-## Creating Page Types in Content Explorer
+## Creating Page Types in Classic UI Content Explorer
 
 1. **Create the container Structure Group:**
-  Inside the **Home** Structure Group, create a new Structure Group named **_Page Types**.
+
+    - Navigate to **Home Strcuture Group** in Classic UI Content Explorer.
+    - Inside the **Home** Structure Group, create a new Structure Group named **_Page Types**.
 
 2. **Open the Structure Group:**
-    - In the Classic Content Explorer, navigate to and open the newly created _Page Types Structure Group.
+    - Navigate to newly created _Page Types Structure Group.
 
 3. **Initiate page creation:**
     - Click **New Page** in the context menu.
