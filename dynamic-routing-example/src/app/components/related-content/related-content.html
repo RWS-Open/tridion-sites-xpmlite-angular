@@ -1,0 +1,46 @@
+<div class="related-items-container">
+    <h2>Related Content</h2>
+
+    <div class="carousel-container">
+        @for (bannerComponent of components(); track bannerComponent.id) {
+        <headless-xpm-editor tcmId="tcm:{{ bannerComponent.publicationId }}-{{ bannerComponent.itemId }}">
+            @if (bannerComponent?.itemListElement?.length) {
+            <owl-carousel-o [options]="customOptions">
+
+                @for (item of bannerComponent.itemListElement; track item.id || $index; let idx = $index) {
+
+                <ng-template carouselSlide [id]="'slide-' + bannerComponent.id + '-' + idx">
+                    <div class="card border-0 releated-content-bg">
+
+                        @if (item.media?.variants?.edges?.[0]?.node?.downloadUrl; as imgUrl) {
+                        <div>
+                            <img [src]="imgUrl" [alt]="item.subheading || ''" class="d-block img-fluid">
+                        </div>
+                        }
+
+                        <div class="card-body pl-0">
+                            @if (item.subheading) {
+                            <h5 class="related-content-title" [attr.xpm-editable-field-name]="item | fieldNamePipe:item.subheading">{{ item.subheading }}</h5>
+                            }
+
+                            @if (item.content?.fragments?.[0]?.html) {
+                            <div class="card-text related-content-desc" [innerHTML]="item.content?.fragments?.[0]?.html" [attr.xpm-editable-field-name]="item | fieldNamePipe:item.content"></div>
+                            }
+
+                            @if (item.link?.linkText) {
+                            <a [routerLink]="item.link?.externalLink || '#'"
+                                class="btn btn-outline-secondary text-uppercase">
+                                {{ item.link.linkText }}
+                            </a>
+                            }
+                        </div>
+
+                    </div>
+                </ng-template>
+                }
+            </owl-carousel-o>
+            }
+        </headless-xpm-editor>
+        }
+    </div>
+</div>

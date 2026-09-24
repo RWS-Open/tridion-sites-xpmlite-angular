@@ -1,0 +1,16 @@
+<headless-xpm-editor [tcmId]="componentId()">
+@for (newsroomComponent of components(); track newsroomComponent.id) {
+<section class="newsroom-container">
+    @for (item of newsroomComponent.articleBody; track item.id) {
+    <div>
+        <img [src]="newsroomComponent.image.variants.edges[0].node.downloadUrl" />
+    </div>
+    <div class="newsroom-content">
+        @if (item.subheading; as sub) {
+        <div class="content"  [attr.xpm-editable-field-name]="item | fieldNamePipe:item.content" [innerHTML]="item.content?.fragments?.[0]?.html"></div>
+        }
+    </div>
+    }
+</section>
+}
+</headless-xpm-editor>

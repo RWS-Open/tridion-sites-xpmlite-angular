@@ -27,11 +27,12 @@
         @if(showOkButton || showCancelButton){
         <div class="item-selector-modal-footer">
             <div class="modal-footer-btn-group">
-                @if (showOkButton) {
-                <button (click)="okButton.emit()" [disabled]="disableOkButton">{{ okButtonText }}</button>
-                }
+               
                 @if (showCancelButton) {
                 <button (click)="closeButton.emit()">{{ cancelButtonText }}</button>
+                }
+                 @if (showOkButton) {
+                <button (click)="okButton.emit()" [disabled]="disableOkButton">{{ okButtonText }}</button>
                 }
             </div>
         </div>

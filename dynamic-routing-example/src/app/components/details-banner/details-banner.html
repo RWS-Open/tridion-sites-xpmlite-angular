@@ -1,0 +1,21 @@
+@for (detailsBanner of components(); track detailsBanner.id) {
+<owl-carousel-o [options]="customOptions">
+    @for (item of detailsBanner.itemListElement; track item.id; let idx=$index) {
+    <ng-template carouselSlide [id]="idx+item.__typename">
+        <img [src]="item.media.variants.edges[0].node.downloadUrl" alt="" class="w-100 animated fadeIn" />
+        <div class="carousel-caption">
+            <div class="row">
+                <div class="col-lg-8 col-12 mx-auto">
+                    <h5 class="h4 text-white banner-text text-uppercase position-relative animated fadeInLeft">
+                        {{item.subheading}}
+                    </h5>
+                    <div class="text-white pt-4 px-5 sub-heading animated fadeInUp delay-1s" [innerHTML]="item.content?.fragments?.[0]?.html"></div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    }
+</owl-carousel-o>
+
+
+}

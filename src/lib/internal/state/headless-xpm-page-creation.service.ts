@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { catchError, forkJoin, map, of, switchMap, throwError } from "rxjs";
-import { PageTypesProps } from "../tridion-bar/page-creation/page-types/page-types.model";
+import { catchError, finalize, forkJoin, map, Observable, of, switchMap, tap, throwError } from "rxjs";
+import { PageTypesProps, StructureGroup } from "../tridion-bar/page-creation/page-types/page-types.model";
 import { OrganizationalItemData } from "../tridion-bar/page-info/item-selector/item-selector.model";
 import { StringUtils } from "../utils/StringUtils";
 import { XpmApiService } from "./headless-xpm-api.service";
@@ -16,6 +16,7 @@ export class HeadlessXpmPageCreationService {
     private readonly apiService = inject(XpmApiService)
     private readonly xpmPageInfoService = inject(XpmPageInfoService)
 
+    private readonly _structureGroup = signal<StructureGroup[]>([])
     private readonly _createdPageId = signal<string | null>(null)
     private readonly _isPageTypesLoading = signal<boolean>(false)
     private readonly _showPageCreationModal = signal<boolean>(false)
@@ -27,6 +28,7 @@ export class HeadlessXpmPageCreationService {
     private readonly _isPageInfoLoading = signal<boolean>(false)
     private readonly _pageInfoError = signal<string | null>(null)
 
+    readonly structureGroup = this._structureGroup.asReadonly()
     readonly isPageTypesLoading = this._isPageTypesLoading.asReadonly();
     readonly showPageCreationModal = this._showPageCreationModal.asReadonly();
     readonly pageTypes = this._pageTypes.asReadonly();
@@ -55,7 +57,7 @@ export class HeadlessXpmPageCreationService {
         this.apiService.getItems<PageData>(`/items/${escapedPageId}?useDynamicVersion=true`).pipe(
             // Get Organizational Item
             switchMap((response) => {
-                console.log(response)
+                //console.log(response)
                 const organizationalItemId = StringUtils.sanitizeIdentifier(response.BluePrintInfo.OwningRepository.IdRef)
                 return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(organizationalItemId))
             }),
@@ -66,30 +68,16 @@ export class HeadlessXpmPageCreationService {
                     return throwError(() => new Error("Structure Group 'Home' not found."));
                 }
 
-                const homeStructuregroupId = filteredStructureGroups.find((structureGroup) => structureGroup.Title === "Home")?.Id as string
-                return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(homeStructuregroupId)).pipe(
-                    map(homeStructureGroupResponse => ({
-                        homeStructuregroupId,
-                        homeStructureGroupResponse
-                    }))
-                )
-            }),
-            switchMap(({ homeStructuregroupId, homeStructureGroupResponse }) => {
+                const homeStructuregroupId = filteredStructureGroups.find((structureGroup) => structureGroup.Title === "Home")?.Id as string;
 
-                return this.apiService.getItems<any>(`/item/defaultModel/Page?containerId=${homeStructuregroupId}`).pipe(
-
-                    map((pageStructure) => {
-                        //console.log("Default Page Structure:", pageStructure);
-                        this._defaultPageStructure.set(pageStructure);
-                        return homeStructureGroupResponse
-                    }),
-                )
+                return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(homeStructuregroupId));
             }),
             // Get Page Types
-            switchMap((homeStructureGroupResponse: any[]) => {
+            switchMap((homeStructureGroupResponse) => {
                 const pageTypesStructureGroupId = homeStructureGroupResponse.find(homeStructureGroup => homeStructureGroup.Title === "_Page Types")?.Id as string
                 return this.apiService.getItems<any[]>(baseUrl(pageTypesStructureGroupId))
-            })
+            }),
+            finalize(() => this._isPageTypesLoading.set(false))
         ).subscribe({
             next: (pageTypes: any) => {
                 // console.log("Page Template:", pageTypes)
@@ -103,7 +91,8 @@ export class HeadlessXpmPageCreationService {
                     pageTemplate: {
                         templateId: template.PageTemplate.IdRef,
                         templateTitle: template.PageTemplate.Title
-                    }
+                    },
+                    publicationId:template.BluePrintInfo.OwningRepository.IdRef
                 })))
             },
             error: (err) => console.log("Failed to fetch page types", err),
@@ -120,7 +109,7 @@ export class HeadlessXpmPageCreationService {
 
     updateSelectedPageData() {
         const pageId = this.selectedPageType()?.pageId as string
-        console.log(pageId)
+        //console.log(pageId)
         this._isPageInfoLoading.set(true)
         this._pageInfoError.set(null)
 
@@ -177,7 +166,7 @@ export class HeadlessXpmPageCreationService {
                 const pageStructure = { ...this.defaultPageStructure() }
                 pageStructure["Regions"] = updatedPageResponse.Regions;
                 this._defaultPageStructure.set(pageStructure)
-                console.log(`Final page Structure with Copied Components`, pageStructure)
+                //console.log(`Final page Structure with Copied Components`, pageStructure)
             },
             complete: () => {
                 this._isPageInfoLoading.set(false)
@@ -191,37 +180,8 @@ export class HeadlessXpmPageCreationService {
         })
     }
 
-    updateFormData(formPageData: {
-        name: string;
-        filename: string;
-    }) {
+    updateFormData(formPageData: { name: string; filename: string; }) {
         this._formPageData.set(formPageData)
-        //console.log(formPageData)
-        const pageStructure = { ...this.defaultPageStructure() }
-        pageStructure["Title"] = formPageData.name;
-        pageStructure["FileName"] = formPageData.filename;
-        pageStructure["PageTemplate"] = {
-            $type: "Link",
-            IdRef: this.selectedPageType()?.pageTemplate.templateId,
-            Title: this.selectedPageType()?.pageTemplate.templateTitle
-        }
-        pageStructure["RegionSchema"] = {
-            $type: "Link",
-            IdRef: this.selectedPageType()?.pageSchema.schemaId,
-            Title: this.selectedPageType()?.pageSchema.schemaTitle
-        }
-        pageStructure["MetadataSchema"] = {
-            $type: "Link",
-            IdRef: this.selectedPageType()?.pageSchema.schemaId,
-            Title: this.selectedPageType()?.pageSchema.schemaTitle
-        }
-        pageStructure["PrimaryBluePrintParentItem"] = {
-            $type: "Link",
-            IdRef: this.selectedPageType()?.pageId,
-            Title: this.selectedPageType()?.pageTitle
-        }
-        pageStructure["IsPageTemplateInherited"] = false
-        this._defaultPageStructure.set(pageStructure)
     }
 
     createPage() {
@@ -231,5 +191,54 @@ export class HeadlessXpmPageCreationService {
 
     updateNewPageId(pageId: string) {
         this._createdPageId.set(pageId)
+    }
+
+    getOrganizationalItems(id: string) {
+        const tcmid = StringUtils.sanitizeIdentifier(id)
+        const url = `/items/${tcmid}/items?useDynamicVersion=true&rloItemTypes=StructureGroup&recursive=true&details=IdAndTitleOnly`
+        this.apiService.getItems<StructureGroup[]>(url).subscribe(strGroup => {
+            //console.log(strGroup)
+            this._structureGroup.set(strGroup)
+        })
+    }
+
+    getDefaultPageModel(structuregroupId: string) {
+        return this.apiService.getItems<any>(`/item/defaultModel/Page?containerId=${encodeURIComponent(structuregroupId)}`)
+            .pipe(
+                tap((pageStructure) => {
+                    const currentForm = this.formPageData();
+                    const selectedType = this.selectedPageType();
+
+                    pageStructure.IsPageTemplateInherited = false;
+                    if (currentForm) {
+                        pageStructure.Title = currentForm.name;
+                        pageStructure.FileName = currentForm.filename;
+                    }
+                    if (selectedType) {
+                        pageStructure.PageTemplate = {
+                            $type: "Link",
+                            IdRef: selectedType.pageTemplate?.templateId,
+                            Title: selectedType.pageTemplate?.templateTitle
+                        };
+                        pageStructure.RegionSchema = {
+                            $type: "Link",
+                            IdRef: selectedType.pageSchema?.schemaId,
+                            Title: selectedType.pageSchema?.schemaTitle
+                        };
+                        pageStructure.MetadataSchema = {
+                            $type: "Link",
+                            IdRef: selectedType.pageSchema?.schemaId,
+                            Title: selectedType.pageSchema?.schemaTitle
+                        }
+                    }
+
+                    this._defaultPageStructure.set(pageStructure);
+                })
+            );
+    }
+
+    geteFolderItems(selectedStrGroupId: string): Observable<any> {
+        const tcmId = StringUtils.sanitizeIdentifier(selectedStrGroupId)
+        return this.apiService.getItems(`/items/${tcmId}/items?useDynamicVersion=true&recursive=false&details=Contentless`)
     }
 }

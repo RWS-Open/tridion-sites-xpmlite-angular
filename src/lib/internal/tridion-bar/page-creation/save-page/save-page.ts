@@ -24,7 +24,7 @@ export class SavePage implements OnInit, OnDestroy {
     page = computed(() => this.pageCreationService.defaultPageStructure())
     pageInfoError = computed(() => this.pageCreationService.pageInfoError())
     isPageInfoLoading = computed(() => this.pageCreationService.isPageInfoLoading())
-
+    
     ngOnInit(): void {
         this.stepperService.setNextLabel('Save');
         this.stepperService.setPrevLabel('Previous');
@@ -35,7 +35,7 @@ export class SavePage implements OnInit, OnDestroy {
             this.pageCreationService.createPage().subscribe({
                 next: (pageResponse: any) => {
                     if (pageResponse) {
-                        console.log(pageResponse)
+                        //console.log(pageResponse)
                         this.pageCreationService.updateNewPageId(pageResponse.Id)
                         const publicationId = StringUtils.sanitizeIdentifier(pageResponse.BluePrintInfo.OwningRepository.IdRef)
                         this.publishService.getPagePublishInfo(publicationId)

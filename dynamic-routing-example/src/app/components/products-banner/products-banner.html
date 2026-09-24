@@ -1,0 +1,19 @@
+@for (productBanner of components(); track productBanner.id) {
+<headless-xpm-editor [tcmId]="componentId()">
+    <section class="hero-banner">
+        <div>
+            <img [src]="productBanner.media.variants.edges[0].node.downloadUrl" />
+        </div>
+        <div class="banner-content">
+            @if (productBanner.headline) {
+            <p class="subheading" [attr.xpm-editable-field-name]="productBanner | fieldNamePipe:productBanner.headline">{{ productBanner.headline }}</p>
+            <div class="content" [attr.xpm-editable-field-name]="productBanner | fieldNamePipe:productBanner.content.data">{{productBanner.content.data.content}}</div>
+            }
+            @if (productBanner.link; as cta) {
+            <a [href]="cta.externalLink || '#'" class="cta-btn">{{ cta.linkText }}</a>
+            }
+        </div>
+
+    </section>
+</headless-xpm-editor>
+}

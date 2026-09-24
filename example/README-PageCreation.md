@@ -42,10 +42,10 @@
 
 3. **Install the Beta package**:
 
-    - Install the [Beta Version](https://www.npmjs.com/package/headless-xpm-angular/v/1.0.3-beta.2) of the Package for Page Creation feature.
+    - Install the [Beta Version](https://www.npmjs.com/package/headless-xpm-angular/v/1.0.3-beta.3) of the Package for Page Creation feature.
 
     ```bash
-      npm i headless-xpm-angular@1.0.3-beta.2
+      npm i headless-xpm-angular@1.0.3-beta.3
     ```
 
 4. **Update environment Variables:**

@@ -1,0 +1,7 @@
+<div class="fallback-card">
+  <h4>{{ item()?.title || component()?.title }}</h4>
+  <p class="meta">Component ID: {{ item()?.itemId || component()?.itemId }}</p>
+  @if (item()?.introduction) {
+    <p>{{ item()?.introduction }}</p>
+  }
+</div>

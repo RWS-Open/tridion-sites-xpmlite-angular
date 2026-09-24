@@ -1,0 +1,17 @@
+@if (resolvedTemplate()) {
+<ng-container *ngComponentOutlet="resolvedTemplate()!; inputs: { pageData: pageData() }">
+</ng-container>
+}
+
+@if (isTemplateMissing()) {
+<div class="error-box">
+    <h2>Template Not Implemented</h2>
+    <p>The template "{{ requestedTemplate() }}" is not mapped in the Angular application.</p>
+</div>
+}
+
+@if (isNotFound()) {
+<div class="error-box">
+    <h2>404 - Page Not Found</h2>
+</div>
+}

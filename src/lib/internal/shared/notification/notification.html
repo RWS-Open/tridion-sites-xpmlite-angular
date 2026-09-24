@@ -1,0 +1,17 @@
+@if (notificationService.notification(); as notification) {
+<div class="notification" [class.success]="notification.type === 'success'"
+  [class.error]="notification.type === 'error'" [class.info]="notification.type === 'info'"
+  [class.warning]="notification.type === 'warning'">
+  <div class="notification-message">
+    {{ notification.message }}
+  </div>
+
+  @if (notification.type === 'error' && notification.error) {
+  <details class="notification-details">
+    <summary>View error details</summary>
+
+    <pre>{{ notification.error | json }}</pre>
+  </details>
+  }
+</div>
+}

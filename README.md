@@ -99,6 +99,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
                      [staging]="true" 
                      [showToolbar]="true" 
                      [showPageEditorLink]="true"
+					 [sitemapPageId]="****"
                   >
                   <router-outlet></router-outlet>
                </headless-xpm-provider>
@@ -246,6 +247,7 @@ A lightweight Angular package that adds edit links to your components or pages, 
 | `staging`            | `boolean` | Enable the toolbar only in staging      | ❌ No (default: `false`) |
 | `showToolbar`        | `boolean` | Show/hide the main XPM toolbar.         | ❌ No (default: `false`) |
 | `showPageEditorLink` | `boolean` | Show an extra link for the current page | ❌ No (default: `false`) |
+| `sitemapPageId`      | `string`  | For Publishig the sitemap navigation    | ❌ No  |
 
 ---
 

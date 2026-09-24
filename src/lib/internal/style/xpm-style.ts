@@ -11,14 +11,14 @@ export function injectHeadlessXpmStyles(isBrowser: boolean) {
     style.setAttribute('data-headless-xpm', '');
 
     style.textContent = `
-    .headlessXpmRegion {
-        border: 1px solid transparent;
+        .headlessXpmRegion {
+        outline: 2px solid transparent;
         position: relative;
-        transition: border-color .2s ease;
+        transition: box-shadow .2s ease, outline-color .2s ease;
     }
 
     .headlessXpmRegion.headlessXpmRegion-hover:hover {
-        border: 2px solid #17c13e !important;
+        outline: 2px solid #17c13e !important;
         box-shadow: 0 0 0 1px #17c13e;
         opacity: 1;
     }
@@ -45,13 +45,11 @@ export function injectHeadlessXpmStyles(isBrowser: boolean) {
         width: 32px;
         z-index: 999;
     }
-
     .headlessXpmRegion-hover:hover .headlessXpmIcon {
         opacity: 1;
     }
     .headlessXpmContent [xpm-editable-field-name]:hover {
-        border: 2px solid green;
-    }    
-    `;
+        outline: 2px solid green;
+    }`;
     document.head.appendChild(style);
 }

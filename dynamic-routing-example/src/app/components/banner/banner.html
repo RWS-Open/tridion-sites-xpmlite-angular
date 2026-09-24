@@ -1,0 +1,21 @@
+@for (bannerComponent of components(); track bannerComponent.id) {
+  <headless-xpm-editor tcmId="tcm:{{ bannerComponent.publicationId }}-{{ bannerComponent.itemId }}">
+<section class="hero-banner">
+  @for (item of bannerComponent.itemListElement; track item.id; let idx=$index) {
+  <div>
+    <img [src]="item.media.variants.edges[0].node.downloadUrl" />
+  </div>
+  <div class="banner-content">
+    @if (item.subheading) {
+    <p class="subheading" [attr.xpm-editable-field-position]="idx" [attr.xpm-editable-field-name]="item | fieldNamePipe:item.subheading">{{ item.subheading }}</p>
+    }
+    @if (item.link; as cta) {
+    <a [href]="cta.externalLink || '#'" class="cta-btn">{{ cta.linkText }}</a>
+    }
+  </div>
+  }
+</section>
+</headless-xpm-editor>
+}
+
+

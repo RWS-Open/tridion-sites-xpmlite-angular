@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, computed, effect, ElementRef, HostBinding, inject, input, OnDestroy, OnInit, Renderer2, signal, ViewChild, ViewContainerRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostBinding, inject, input, OnDestroy, OnInit, Renderer2, signal, ViewChild, ViewContainerRef } from "@angular/core";
 
-import { XpmStateService } from "../internal/state/headless-xpm-state.service";
-import { HeadlessXpmProviderState } from "../internal/state/headless-xpm-provider.state";
 import { fromEvent, Subscription, throttleTime } from "rxjs";
-import { InlineEditor } from "./inline-editor/inline-editor";
 import { AuthService } from "../internal/state/headless-xpm-auth.service";
 import { InlineEditorService } from "../internal/state/headless-xpm-inline-editor.service";
+import { HeadlessXpmProviderState } from "../internal/state/headless-xpm-provider.state";
+import { XpmStateService } from "../internal/state/headless-xpm-state.service";
 import { StringUtils } from "../internal/utils/StringUtils";
+import { InlineEditor } from "./inline-editor/inline-editor";
 
 function splitStyle(style: string | Record<string, any> | null | undefined) {
     return {
@@ -85,7 +85,7 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
                 return;
             }
             event.stopPropagation();
-            if (!this.isAuthenticated()) {
+            if (!this.providerState?.staging() || !this.isAuthenticated()) {
                 this.cleanup()
                 //console.warn('Action restricted: Authentication is required.');
                 return;
@@ -175,7 +175,7 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
             console.error('HeadlessXpmEditor must be used inside a HeadlessXpmProvider');
         }
         effect(() => {
-            if (!this.authService.isAuthenticated()) {
+            if (!this.providerState?.staging() || !this.authService.isAuthenticated()) {
                 this.cleanup();
             }
         });

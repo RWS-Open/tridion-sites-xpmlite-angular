@@ -1,0 +1,15 @@
+<div class="pageroot" [attr.data-page]="pageTcmdId()">
+    @for (region of pageData().regions; track region.name) {
+    @switch (region.name) {
+    @case ('Product Banner') {
+    <app-products-banner [components]="region.components" />
+    }
+    @case ('Solar Products') {
+    <app-solutions [components]="region.components" />
+    }
+    @case ('Related Content') {
+    <app-related-content [components]="region.components" />
+    }
+    }
+    }
+</div>

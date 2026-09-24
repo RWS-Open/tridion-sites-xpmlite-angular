@@ -1,0 +1,26 @@
+.carousel-caption{
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 50%;
+    width: 50%;
+    text-align: center;
+    color: #fff;
+}
+
+.carousel-caption h5{
+    font-size: 2.5rem;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+img.w-100.animated.fadeIn {
+    height: 90vh;
+    object-fit: cover;
+}
+
+.text-white.pt-4.px-5.sub-heading.animated.fadeInUp.delay-1s{
+    font-size: 18px;
+    line-height: 1.8;
+}

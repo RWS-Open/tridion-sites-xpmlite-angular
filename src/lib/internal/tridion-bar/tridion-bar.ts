@@ -1,12 +1,15 @@
 import { CommonModule } from "@angular/common";
 import { afterNextRender, ChangeDetectionStrategy, Component, DOCUMENT, EnvironmentInjector, inject, input, OnDestroy, output, runInInjectionContext, signal } from "@angular/core";
 import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from "rxjs";
+
 import { AuthService } from "../state/headless-xpm-auth.service";
 import { XpmPageInfoService } from "../state/headless-xpm-page-info.service";
 import { PublishService } from "../state/headless-xpm-publish.service";
 import { XpmStateService } from "../state/headless-xpm-state.service";
 
-import { filter, Subscription } from "rxjs";
+
+import { XpmNotification } from "../shared/notification/notification";
 import { HeadlessXpmPageCreationService } from "../state/headless-xpm-page-creation.service";
 import { StringUtils } from "../utils/StringUtils";
 import { PageCreation } from "./page-creation/page-creation";
@@ -15,7 +18,7 @@ import { PublishPageModal } from "./page-info/publish-page/publish-page-modal";
 
 @Component({
     selector: "app-tridion-bar",
-    imports: [CommonModule, PageInfo, PublishPageModal, PageCreation],
+    imports: [CommonModule, PageInfo, PublishPageModal, PageCreation, XpmNotification],
     templateUrl: "./tridion-bar.html",
     styleUrl: './tridion-bar.css',
     changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,17 +1,21 @@
 import { computed, Injectable, Signal, signal } from "@angular/core";
 
-@Injectable()
+@Injectable({
+     providedIn: "root"
+})
 
 export class HeadlessXpmProviderState {
     private readonly _editorUrl = signal<string>('');
     private readonly _staging = signal(false);
     private readonly _showToolbar = signal(false);
     private readonly _showPageEditorLink = signal(false);
+    private readonly _sitemapPageId = signal<string>('')
 
     readonly editorUrl: Signal<string> = this._editorUrl.asReadonly();
     readonly staging: Signal<boolean> = this._staging.asReadonly();
     readonly showToolbar: Signal<boolean> = this._showToolbar.asReadonly();
     readonly showPageEditorLink: Signal<boolean> = this._showPageEditorLink.asReadonly();
+    readonly sitemapPageId:Signal<string> = this._sitemapPageId.asReadonly()
 
     readonly shouldShowToolbar: Signal<boolean> = computed(() =>
         this._staging() && this._showToolbar()
@@ -31,5 +35,9 @@ export class HeadlessXpmProviderState {
 
     updateShowPageEditorLink(value: boolean): void {
         this._showPageEditorLink.set(value);
+    }
+
+    updateSitemapPageId(pageId:string):void {
+        this._sitemapPageId.set(pageId)
     }
 }

@@ -1,30 +1,108 @@
 <form [formGroup]="pageDetailsForm" (ngSubmit)="onSubmit()">
+    @if(backendGeneralError()) {
+    <div class="backend-alert-error">
+        {{ backendGeneralError() }}
+    </div>
+    }
     <div class="xpm-form-group">
         <label for="name">Name <span class="form-group-input-required">*</span></label>
-        <input id="name" formControlName="name" class="xpm-form-control" placeholder="Enter page name" />
-        @if(pageDetailsForm.get('name')?.invalid && pageDetailsForm.get('name')?.touched) {
+        <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="xpm-form-control"
+            [class.is-invalid]="pageDetailsForm.get('name')?.invalid && pageDetailsForm.get('name')?.touched"
+            placeholder="Enter page name"
+            #nameInput
+            autofocus
+         />
+        @if(pageDetailsForm.get('name')?.touched && pageDetailsForm.get('name')?.errors) {
+        @if(pageDetailsForm.get('name')?.hasError('required')) {
         <div class="validation-error">Page name is required.</div>
+        }
+        @if(pageDetailsForm.get('name')?.errors?.['duplicateName']) {
+        <div class="validation-error">{{ pageDetailsForm.get('name')?.errors?.['duplicateName'] }}</div>
+        }
         }
     </div>
 
     <div class="xpm-form-group">
         <label for="fileName">File Name <span class="form-group-input-required">*</span></label>
-        <input id="fileName" formControlName="filename" class="xpm-form-control" placeholder="Enter file name" />
-        @if(pageDetailsForm.get('filename')?.invalid && pageDetailsForm.get('filename')?.touched) {
+        <input 
+            id="fileName" 
+            type="text" 
+            formControlName="filename" 
+            class="xpm-form-control"
+            [class.is-invalid]="pageDetailsForm.get('filename')?.invalid && pageDetailsForm.get('filename')?.touched"
+            placeholder="Enter file name" 
+        />
+        @if(pageDetailsForm.get('filename')?.touched && pageDetailsForm.get('filename')?.errors) {
+        @if(pageDetailsForm.get('filename')?.hasError('required')) {
         <div class="validation-error">File name is required.</div>
         }
+        @if(pageDetailsForm.get('filename')?.errors?.['duplicateFileName']) {
+        <div class="validation-error">{{ pageDetailsForm.get('filename')?.errors?.['duplicateFileName'] }}</div>
+        }
+        }
     </div>
+
+    <div class="xpm-form-group dropdown-group">
+        <label for="foldername">Select Structure group <span class="form-group-input-required">*</span></label>
+        <div class="input-with-icon">
+            <input 
+                id="foldername" 
+                type="text" 
+                formControlName="foldername" 
+                class="xpm-form-control dropdown-trigger"
+                [class.is-invalid]="pageDetailsForm.get('foldername')?.invalid && pageDetailsForm.get('foldername')?.touched"
+                placeholder="Select Structure group" 
+                readonly 
+                (click)="fetchStructureGroups()"
+                (blur)="closeDropdown()" 
+            />
+            <span class="dropdown-chevron" aria-hidden="true">&#9662;</span>
+        </div>
+
+        @if(isDropdownOpen() && strGroups().length > 0) {
+        <div class="xpm-structure-group-container">
+            <ul class="xpm-structure-group-list">
+                @for(item of strGroups(); track item.Id) {
+                <li class="xpm-structure-group-item" [class.selected]="selectedStrGroup()?.Id === item.Id"
+                    (mousedown)="$event.preventDefault(); handleSelectedStrGroup(item)">
+                    <div class="xpm-structure-group-item-icon">
+                        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 13"
+                            width="1rem" height="1rem">
+                            <path
+                                d="M7.94 1.94l-1.214.808A1.5 1.5 0 0 1 5.894 3H0V1.4A1.4 1.4 0 0 1 1.4 0h4.186a1 1 0 0 1 .707.293l1.646 1.646zM9.65 2H14.6A1.4 1.4 0 0 1 16 3.4v8.2a1.4 1.4 0 0 1-1.4 1.4H1.4A1.4 1.4 0 0 1 0 11.6V4h5.894a2.5 2.5 0 0 0 1.387-.42L9.651 2z"
+                                fill="#d81159"></path>
+                        </svg>{{ item.Title }}
+                    </div>
+                    @if(selectedStrGroup()?.Id === item.Id) {
+                    <span class="check-icon">&#10003;</span>
+                    }
+                </li>
+                }
+            </ul>
+        </div>
+        }
+
+        @if(pageDetailsForm.get('foldername')?.invalid && pageDetailsForm.get('foldername')?.touched) {
+        <div class="validation-error">Please select folder.</div>
+        }
+    </div>
+
     <div class="xpm-form-group">
         <label for="pageType">Page Type</label>
-        <input id="pageType" formControlName="pageType" class="xpm-form-control" readonly />
+        <input id="pageType" type="text" formControlName="pageType" class="xpm-form-control" readonly />
     </div>
+
     <div class="xpm-form-group">
         <label for="pageTemplate">Page Template</label>
-        <input id="pageTemplate" formControlName="template" class="xpm-form-control" readonly />
+        <input id="pageTemplate" type="text" formControlName="template" class="xpm-form-control" readonly />
     </div>
 
     <div class="xpm-form-group">
         <label for="pageSchema">Page Schema</label>
-        <input id="pageSchema" formControlName="schema" class="xpm-form-control" readonly />
+        <input id="pageSchema" type="text" formControlName="schema" class="xpm-form-control" readonly />
     </div>
 </form>

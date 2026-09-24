@@ -1,0 +1,20 @@
+<headless-xpm-editor [tcmId]="componentId()">
+@for (campaignComponent of components(); track campaignComponent.id) {
+  <section class="campaign-container">
+    @for (item of campaignComponent.articleBody; track item.id) {
+    <div>
+      <img [src]="campaignComponent.image?.variants.edges[0].node.downloadUrl" />
+    </div>
+    <div class="campaign-content">
+      @if (item.subheading) {
+      <p class="subheading" [attr.xpm-editable-field-name]="item | fieldNamePipe:item.subheading">{{ item.subheading }}</p>
+      <div class="content" [attr.xpm-editable-field-name]="item | fieldNamePipe:item.content" [innerHTML]="item.content?.fragments?.[0]?.html"></div>
+      }
+      @if (item.link; as cta) {
+      <a [href]="cta.externalLink || '#'" class="cta-btn">{{ cta.linkText }}</a>
+      }
+    </div>
+    }
+  </section>
+  }
+</headless-xpm-editor>

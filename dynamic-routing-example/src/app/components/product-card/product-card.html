@@ -1,0 +1,38 @@
+<div class="product-container">
+    <h2 class="product-title">Our Offerings</h2>
+
+    <div class="product-items">
+        @for(productItem of cardItem();track productItem.id){
+        <div class="product-card">
+            <headless-xpm-editor tcmId="tcm:{{ productItem.publicationId }}-{{ productItem.itemId }}">
+                @for(item of productItem.body; track item; let idx=$index){
+                @if (item.media) {
+                <div class="image-wrapper">
+                    <img [src]="item.media.variants.edges[0].node.downloadUrl" [alt]="productItem.headline"
+                        loading="lazy" />
+                </div>
+                }
+                <div class="card-body">
+                    <div class="card-content">
+                        <h3 [attr.xpm-editable-field-position]="idx"
+                            [attr.xpm-editable-field-name]="productItem | fieldNamePipe:productItem.headline">{{
+                            productItem.headline}}</h3>
+                        @if (productItem.introduction) {
+                        <p class="intro" [attr.xpm-editable-field-position]="idx"
+                            [attr.xpm-editable-field-name]="productItem | fieldNamePipe:productItem.introduction">{{
+                            productItem.introduction }}</p>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        @if (productItem.link; as cta) {
+                        <a [href]="productItem.resolvedLink.url || '#'" class="cta-btn">{{ cta.linkText }}</a>
+                        }
+                    </div>
+                </div>
+                }
+            </headless-xpm-editor>
+        </div>
+        }
+    </div>
+
+</div>

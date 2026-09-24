@@ -1,0 +1,33 @@
+<section id="our-solutions">
+    <div class="solution-container">
+        <h6 class=" offerings-title">The Right Solar Solution for you</h6>
+        <p class="sub-heading">Explore the wide variety of systems that we have</p>
+        <div class="solution-row">
+            @for (solutions of components(); track solutions.id; let idx = $index) {
+                <headless-xpm-editor tcmId="tcm:{{ solutions.publicationId }}-{{ solutions.itemId }}">
+                    <div class="card-group" [style]="idx % 2 === 0 ? 'flex-direction: reverse;' : 'flex-direction: row-reverse;'">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="card-content">
+                                <h6 class="block-title" [attr.xpm-editable-field-name]="solutions | fieldNamePipe:solutions.headline">{{solutions.headline}}</h6>
+                                <p class="card-text" [attr.xpm-editable-field-name]="solutions | fieldNamePipe:solutions.introduction">{{solutions.introduction}}</p>
+                                <a [routerLink]="[solutions.resolvedLink.url]" routerLinkActive="router-link-active"
+                                    class="link">{{solutions.link.linkText}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        @for (item of solutions.body; track item) {
+                        <div class="w-100 h-100">
+                            <img class="product-card-img card-img-top"
+                                [src]="item.media.variants.edges[0].node.downloadUrl" alt="Card image cap">
+                        </div>
+                        }
+                    </div>
+                </div>
+            </headless-xpm-editor>
+            }
+
+        </div>
+    </div>
+</section>

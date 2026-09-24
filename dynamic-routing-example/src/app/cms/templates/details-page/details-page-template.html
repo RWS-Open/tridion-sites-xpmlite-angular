@@ -1,0 +1,21 @@
+<div class="pageroot" [attr.data-page]="pageTcmdId()">
+
+  <headless-xpm-editor [isPage]="true" [tcmId]="pageTcmdId()" containerStyle="border:none">
+    @for (region of pageData().regions; track region.name) {
+    @switch (region.name) {
+    @case ('Details Banner') {
+    <app-details-banner [components]="region.components" />
+    }
+    <!--  @case ('Product Region') {
+            <app-product [components]="region.components" />
+          }
+          @case ('Campaign Region') {
+            <app-campaign-card [components]="region.components" />
+          }
+          @case ('News Room Region') {
+            <app-newsroom [components]="region.components" />
+          } -->
+    }
+    }
+  </headless-xpm-editor>
+</div>
