@@ -1,3 +1,18 @@
+import {
+  ApplicableAction,
+  ApprovalStatus,
+  BluePrintInfo,
+  ExtensionProperties,
+  LoadInfo,
+  LocationInfo,
+  LockInfo,
+  Metadata,
+  SecurityDescriptor,
+  UserRef,
+  VersionInfo,
+  WorkflowInfo
+} from './headless-xpm-common.model';
+
 export interface AuthConfig {
     clientId: string;
     issuer: string;
@@ -27,7 +42,7 @@ export interface PageData {
   ApplicableActions: ApplicableAction[];
   ApprovalStatus: ApprovalStatus;
   BluePrintInfo: BluePrintInfo;
-  ComponentPresentations: any[];
+  ComponentPresentations: ComponentPresentation[];
   ExtensionProperties: ExtensionProperties;
   FileName: string;
   IsEditable: boolean;
@@ -38,50 +53,17 @@ export interface PageData {
   Locale: string;
   LocationInfo: LocationInfo;
   LockInfo: LockInfo;
-  Metadata: ExtensionProperties;
+  Metadata: Metadata;
   MetadataSchema: ApprovalStatus;
   PageTemplate: ApprovalStatus;
-  Regions: Region2[];
+  Regions: Region[];
   RegionSchema: ApprovalStatus;
   SecurityDescriptor: SecurityDescriptor;
   VersionInfo: VersionInfo;
   WorkflowInfo: WorkflowInfo;
 }
 
-interface WorkflowInfo {
-  '$type': string;
-  ActivityConstraints: string;
-  ActivityDefinitionDescription: string;
-  ActivityInstance: ApprovalStatus;
-  Assignee: LockUser;
-  Performer: LockUser;
-  PreviousMessage: string;
-  ProcessInstance: ApprovalStatus;
-}
-
-interface VersionInfo {
-  '$type': string;
-  CheckOutUser: LockUser;
-  CreationDate: string;
-  Creator: LockUser;
-  IsNew: boolean;
-  LastVersion: number;
-  LockType: string[];
-  Revision: number;
-  RevisionDate: string;
-  Revisor: LockUser;
-  SystemComment: string;
-  UserComment: string;
-  Version: number;
-}
-
-interface SecurityDescriptor {
-  '$type': string;
-  Permissions: string[];
-  Rights: string[];
-}
-
-export interface Region2 {
+export interface Region {
   '$type': string;
   ComponentPresentations: ComponentPresentation[];
   Metadata: Metadata;
@@ -90,79 +72,9 @@ export interface Region2 {
   RegionSchema: ApprovalStatus;
 }
 
-export interface Region {
-  '$type': string;
-  ComponentPresentations: ComponentPresentation[];
-  Metadata: ExtensionProperties;
-  RegionName: string;
-  Regions: Region[];
-  RegionSchema: ApprovalStatus;
-}
-
-interface Metadata {
-  '$type': string;
-  maxItems?: null;
-}
-
 interface ComponentPresentation {
   '$type': string;
   Component: ApprovalStatus;
   ComponentTemplate: ApprovalStatus;
-  Conditions: any[];
-}
-
-interface LockInfo {
-  '$type': string;
-  LockType: string[];
-  LockUser: LockUser;
-}
-
-interface LockUser {
-  '$type': string;
-  IdRef: string;
-  Title: string;
-  Description: string;
-}
-
-interface LocationInfo {
-  '$type': string;
-  ContextRepository: ApprovalStatus;
-  OrganizationalItem: ApprovalStatus;
-  Path: string;
-  PublishLocationPath: string;
-  PublishLocationUrl: string;
-  PublishPath: string;
-  WebDavUrl: string;
-}
-
-interface LoadInfo {
-  '$type': string;
-  ErrorMessage: string;
-  ErrorType: string;
-  State: string;
-}
-
-interface ExtensionProperties {
-  '$type': string;
-}
-
-interface BluePrintInfo {
-  '$type': string;
-  IsLocalized: boolean;
-  IsShared: boolean;
-  OwningRepository: ApprovalStatus;
-  PrimaryBluePrintParentItem: ApprovalStatus;
-}
-
-interface ApprovalStatus {
-  '$type': string;
-  IdRef: string;
-  Title: string;
-}
-
-interface ApplicableAction {
-  '$type': string;
-  Href: string;
-  Rel: string;
-  Type: string;
+  Conditions: unknown[];
 }

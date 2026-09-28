@@ -2,16 +2,29 @@
 <div class="notification" [class.success]="notification.type === 'success'"
   [class.error]="notification.type === 'error'" [class.info]="notification.type === 'info'"
   [class.warning]="notification.type === 'warning'">
+
   <div class="notification-message">
-    {{ notification.message }}
+
+    <div class="notification-heading">
+      <span>{{ notification.message }}</span>
+      <span class="notification-clear-icon">
+        <svg version="1.1" fill="currentColor" preserveAspectRatio="xMidYMid meet"
+          viewBox="0 0 16 16" width="1rem" height="1rem">
+          <path
+            d="M8 0C3.58065 0 0 3.58065 0 8C0 12.4194 3.58065 16 8 16C12.4194 16 16 12.4194 16 8C16 3.58065 12.4194 0 8 0Z">
+          </path>
+          <path
+            d="M11.0581 5.76452L8.82257 8.00001L11.0581 10.2355C11.2097 10.3871 11.2097 10.6323 11.0581 10.7839L10.7839 11.0581C10.6322 11.2097 10.3871 11.2097 10.2355 11.0581L7.99999 8.82259L5.76451 11.0581C5.61289 11.2097 5.36773 11.2097 5.21612 11.0581L4.94193 10.7839C4.79031 10.6323 4.79031 10.3871 4.94193 10.2355L7.17741 8.00001L4.94193 5.76452C4.79031 5.61291 4.79031 5.36775 4.94193 5.21614L5.21612 4.94194C5.36773 4.79033 5.61289 4.79033 5.76451 4.94194L7.99999 7.17743L10.2355 4.94194C10.3871 4.79033 10.6322 4.79033 10.7839 4.94194L11.0581 5.21614C11.2064 5.36775 11.2064 5.61291 11.0581 5.76452Z"
+            fill="#ffffff"></path>
+        </svg>
+      </span>
+    </div>
+    <div class="notification-details">
+      <div class="notification-details-text">{{notification.details}}</div>
+      @if (notification.type === 'error' && notification.error) {
+      <pre>{{ notification.error | json }}</pre>
+      }
+    </div>
   </div>
-
-  @if (notification.type === 'error' && notification.error) {
-  <details class="notification-details">
-    <summary>View error details</summary>
-
-    <pre>{{ notification.error | json }}</pre>
-  </details>
-  }
 </div>
 }

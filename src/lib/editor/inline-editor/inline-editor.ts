@@ -1,9 +1,9 @@
 import { Component, inject, signal } from "@angular/core";
-import { concatMap, Observable } from "rxjs";
+import { concatMap } from "rxjs";
 
 import { InlineEditorService } from "../../internal/state/headless-xpm-inline-editor.service";
 import { StringUtils } from "../../internal/utils/StringUtils";
-import { CheckoutContent, CheckoutData } from "./inline-editor.model";
+import { CheckInPayload, CheckoutContent, CheckoutData } from "./inline-editor.model";
 
 @Component({
   selector: "app-inline-editor",
@@ -26,12 +26,12 @@ export class InlineEditor {
 
   onInput(event: Event) {
     const el = event.target as HTMLInputElement
-    if(el.name!=='null'){
+    if (el.name !== 'null') {
       this.inputValue.set(el.value)
       this.fieldName.set(el?.name as string)
       this.fieldPosition.set(el.getAttribute('xpm-editable-field-position') as string)
-    } else{
-      
+    } else {
+
       this.inputValue.set(el.value)
       this.fieldName.set(el?.closest('[xpm-editable-field-name]')?.getAttribute("xpm-editable-field-name") as string)
       this.fieldPosition.set(el?.closest('[xpm-editable-field-name]')?.getAttribute("xpm-editable-field-name") as string)
@@ -47,33 +47,43 @@ export class InlineEditor {
   }
 
   updateComponent() {
-    const filterComponentData = this.componentData()?.filter(item => item.Id === this.tcmId())
-    if(!filterComponentData || !filterComponentData.length) return;
-    const primaryBlueprintItem = StringUtils.sanitizeIdentifier(filterComponentData[0]?.BluePrintInfo.PrimaryBluePrintParentItem.IdRef as string);
+    const currentTcmId = this.tcmId();
+    if (!currentTcmId) return;
 
-    this.inlineEditorService.checkoutItem<CheckoutData>(primaryBlueprintItem as string).pipe(
-      concatMap((checkoutResponse: CheckoutData): Observable<CheckoutData> => {
+    const targetComponent = this.componentData()?.find(item => item.Id === currentTcmId);
+    const rawParentId = targetComponent?.BluePrintInfo?.PrimaryBluePrintParentItem?.IdRef;
+    if (!rawParentId) return;
+
+    const primaryBlueprintItem = StringUtils.sanitizeIdentifier(rawParentId);
+
+    let checkedOutComponentId: string | null = null;
+
+    this.inlineEditorService.checkoutItem<CheckoutData>(primaryBlueprintItem).pipe(
+      concatMap((checkoutResponse: CheckoutData) => {
+
+        const checkedOutComponentId = StringUtils.sanitizeIdentifier(checkoutResponse.Id);
+
         const field = this.fieldName();
         const fieldPosition = this.fieldPosition()
         const updateValue = this.inputValue();
-        const checkoutId = StringUtils.sanitizeIdentifier(checkoutResponse.Id)
         const content = checkoutResponse.Content as CheckoutContent;
+
         this.updateNestedData(content, field, updateValue, fieldPosition);
-        return this.inlineEditorService.saveItem(checkoutId, checkoutResponse).pipe(
+
+        return this.inlineEditorService.saveItem<CheckoutData>(checkedOutComponentId, checkoutResponse).pipe(
           concatMap((updateResponse) => {
             const updatedId = StringUtils.sanitizeIdentifier(updateResponse.Id);
             const componentCheckInBody = {
               "RemovePermanentLock": true
             }
-            return this.inlineEditorService.checkinItem<any>(updatedId, componentCheckInBody)
+            return this.inlineEditorService.checkinItem<CheckInPayload>(updatedId, componentCheckInBody)
           })
         )
       })
     ).subscribe()
-
   }
 
-  updateNestedData(obj:CheckoutContent, targetKey: string, updateValue: string, fieldPosition: string | number): boolean {
+  updateNestedData(obj: CheckoutContent, targetKey: string, updateValue: string, fieldPosition: string | number): boolean {
 
     if (!obj || typeof obj !== 'object') return false;
 
@@ -89,11 +99,7 @@ export class InlineEditor {
 
       if (Array.isArray(value)) {
 
-        if (
-          value[targetIndex] &&
-          typeof value[targetIndex] === 'object' &&
-          targetKey in value[targetIndex]
-        ) {
+        if (value[targetIndex] && typeof value[targetIndex] === 'object' && targetKey in value[targetIndex]) {
           value[targetIndex][targetKey] = updateValue;
           return true;
         }

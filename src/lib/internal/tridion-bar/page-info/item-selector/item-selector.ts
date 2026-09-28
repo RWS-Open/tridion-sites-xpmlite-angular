@@ -4,7 +4,7 @@ import { map } from "rxjs";
 
 import { XpmPageInfoService } from "../../../state/headless-xpm-page-info.service";
 
-import { PageData } from "../../../state/headless-xpm-page.model";
+import { PageData, Region } from "../../../state/headless-xpm-page.model";
 import { StringUtils } from "../../../utils/StringUtils";
 import { ComponentTemplateLinks } from "./item-selector.model";
 import { OrganizationalTreeNode } from "./organizational-tree-node/organizational-tree-node";
@@ -34,7 +34,7 @@ export class ItemSelector implements OnInit {
     organizationalItems = this.xpmPageInfoService.treeData;
     selectedRegionConstraints = computed(() => this.xpmPageInfoService.selectedRegionConstraints())
     organizationItemId = computed(() => StringUtils.sanitizeIdentifier(this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string))
-    publicationTitle = computed(() => this.xpmPageInfoService.pageInfo()?.LocationInfo.ContextRepository.Title)
+    publicationTitle = computed(() => this.xpmPageInfoService.pageInfo()?.LocationInfo.ContextRepository?.Title)
     currentItem = computed(() => this.xpmPageInfoService.selectedNode()?.label)
 
 
@@ -50,33 +50,46 @@ export class ItemSelector implements OnInit {
         this.xpmPageInfoService.toggleModal()
     }
 
-    updatePage() {
+    updatePage(): void {
         const selectedRegionName = this.xpmPageInfoService.selectedPageitem()?.name;
         const selectedComponent = this.selectedComponent();
         const selectedComponentTemplate = this.selectedComponentTemplate();
+
         if (selectedRegionName && selectedComponent) {
             const pageData = this.xpmPageInfoService.pageInfo();
-            const updateComponentPresentation = (regions: any[]) => {
+
+            const updateComponentPresentation = (regions: Region[]): boolean => {
                 for (const region of regions) {
                     if (region.RegionName === selectedRegionName) {
+                        region.ComponentPresentations = region.ComponentPresentations || [];
+
                         region.ComponentPresentations.push({
                             $type: "ComponentPresentation",
-                            Component: { $type: "Link", IdRef: selectedComponent.IdRef, Title: selectedComponent.Title },
-                            ComponentTemplate: { $type: "Link", IdRef: selectedComponentTemplate?.IdRef, Title: selectedComponentTemplate?.Title },
+                            Component: {
+                                $type: "Link",
+                                IdRef: selectedComponent.IdRef,
+                                Title: selectedComponent.Title
+                            },
+                            ComponentTemplate: {
+                                $type: "Link",
+                                IdRef: selectedComponentTemplate?.IdRef as string,
+                                Title: selectedComponentTemplate?.Title as string
+                            },
                             Conditions: []
                         });
-                        return true
+                        return true;
                     }
-                    if (region.Regions?.length > 0 && updateComponentPresentation(region.Regions)) {
-                        return true
+
+                    if (region.Regions && region.Regions.length > 0 && updateComponentPresentation(region.Regions)) {
+                        return true;
                     }
                 }
-                return false
-            }
+                return false;
+            };
+
             if (pageData?.Regions) {
                 updateComponentPresentation(pageData.Regions);
-                this.xpmPageInfoService.updatePageInfo(pageData as PageData)
-
+                this.xpmPageInfoService.updatePageInfo(pageData as PageData);
             }
         }
     }

@@ -1,15 +1,17 @@
 import { DOCUMENT, effect, inject, Injectable, signal } from "@angular/core";
-import { concatMap, map, tap } from "rxjs";
+import { concatMap, map, Observable, tap } from "rxjs";
 
 import { ComponentTemplateLinks, OrganizationalItemData, TreeNode } from "../tridion-bar/page-info/item-selector/item-selector.model";
 import { ComponentPresentationConstraint, NestedRegion2, PageSchema } from "./headless-xpm-page-schema.model";
-import { PageData, Region, Region2 } from "./headless-xpm-page.model";
+import { PageData, Region } from "./headless-xpm-page.model";
 import { SelectedPageItem } from "./headless-xpm-publications.model";
 
+import { ItemResponse } from "../tridion-bar/page-info/page-info.model";
 import { StringUtils } from "../utils/StringUtils";
 import { XpmApiService } from "./headless-xpm-api.service";
 import { AuthService } from "./headless-xpm-auth.service";
 import { XpmHighlighter } from "./headless-xpm-highlighter";
+import { NotificationService } from "./headless-xpm-notification.service";
 
 @Injectable({
     providedIn: "root"
@@ -20,6 +22,7 @@ export class XpmPageInfoService {
     private readonly apiService = inject(XpmApiService)
     private readonly authService = inject(AuthService)
     private readonly highlighterService = inject(XpmHighlighter)
+    private readonly notificationService = inject(NotificationService)
 
     private readonly _showPageInfo = signal<boolean>(false)
     private readonly _pageInfo = signal<PageData | null>(null)
@@ -60,12 +63,12 @@ export class XpmPageInfoService {
         })
     }
 
-    pageInfoLoaded(pageId: string){
+    pageInfoLoaded(pageId: string) {
         this.isLoading.set(true)
         const pageTcmId = StringUtils.sanitizeIdentifier(pageId)
         const url = `/items/${pageTcmId}?useDynamicVersion=true`;
 
-       return this.apiService.getItems<PageData>(url)
+        return this.apiService.getItems<PageData>(url)
     }
 
     getOrganizationalItems(orgItemId: string) {
@@ -182,18 +185,18 @@ export class XpmPageInfoService {
         this._pageInfo.set(pageData)
     }
 
-    savePageInfo() {
+    savePageInfo():void {
         const body = this._pageInfo();
         if (!body) return;
         this.isPageUpdating.set(true)
         this.checkoutPage().pipe(
-            concatMap((checkoutRes: any) => {
+            concatMap((checkoutRes: ItemResponse) => {
                 body.Id = checkoutRes.Id;
                 const checkoutId = StringUtils.sanitizeIdentifier(checkoutRes.Id)
                 const url = `/items/${checkoutId}`;
                 return this.apiService.updateItem(url, body);
             }),
-            concatMap((updateRes: any) => {
+            concatMap((updateRes: ItemResponse) => {
                 const id = StringUtils.sanitizeIdentifier(updateRes?.Id)
                 const checkInUrl = `/items/${id}/checkIn`;
                 const checkInBody = { "RemovePermanentLock": true };
@@ -201,18 +204,20 @@ export class XpmPageInfoService {
                 return this.apiService.checkin(checkInUrl, checkInBody);
             })
         ).subscribe({
-            next: (updateResponse) => {
+            next: (updateResponse: ItemResponse) => {
                 // console.log("Page saved and checked in successfully", updateResponse);
                 this.isPageUpdating.set(false)
+                this.notificationService.success("Success", `Page ${updateResponse?.Title} has been updated successfully!`)
             },
             error: (err) => {
                 this.isPageUpdating.set(false)
                 console.error("Error during save sequence", err);
+                this.notificationService.error("Error", `Error ${err?.error?.Message}`)
             }
         });
     }
 
-    checkoutPage() {
+    checkoutPage(): Observable<ItemResponse> {
         const pageTcmId = StringUtils.sanitizeIdentifier(this.pageId() as string)
         const url = `/items/${pageTcmId}/checkOut`
         return this.apiService.checkOutItem(url, {})
@@ -226,7 +231,7 @@ export class XpmPageInfoService {
         this._pageInfo.update(state => {
             if (!state) return state;
 
-            const processRegions = (regions: Region2[]): any => {
+            const processRegions = (regions: Region[]): Region[] => {
                 return regions.map((region: Region) => {
                     const updatedCps = region.ComponentPresentations?.filter((item, index) => !(item.Component.IdRef === selectedId && index === position))
                     const updateNestedRegions = region.Regions ? processRegions(region.Regions) : region.Regions
@@ -239,7 +244,7 @@ export class XpmPageInfoService {
             };
             return {
                 ...state,
-                Regions: processRegions(state.Regions as Region2[])
+                Regions: processRegions(state.Regions as Region[])
             };
         });
     }
@@ -250,27 +255,38 @@ export class XpmPageInfoService {
         const regionName = this.selectedPageitem()?.name;
         this.apiService.getItems<PageSchema>(url).subscribe(res => {
             this._pageSchema.set(res)
-            // const regionConstraints = res?.RegionDefinition?.NestedRegions?.find(region => region.RegionName === this.selectedPageitem()?.name)?.RegionSchema?.ExpandedData?.RegionDefinition?.ComponentPresentationConstraints ?? [];
             const regionConstraints = regionName && res.RegionDefinition.NestedRegions ? this.getConstraints(res.RegionDefinition.NestedRegions, regionName) : []
-            // this.getConstraints(constraints, regionName as string)
             this._selectedRegionConstraints.set(regionConstraints)
         })
     }
 
-    getConstraints(regions: NestedRegion2[], regionName: string) {
+    getConstraints(regions: NestedRegion2[], regionName: string): ComponentPresentationConstraint[] {
+        const result = this.findConstraintsRecursive(regions, regionName);
+        return result ?? [];
+    }
+
+    private findConstraintsRecursive(regions: NestedRegion2[] | undefined, regionName: string): ComponentPresentationConstraint[] | null {
+        if (!regions?.length) {
+            return null;
+        }
+
         for (const region of regions) {
+            const definition = region.RegionSchema?.ExpandedData?.RegionDefinition;
+
             if (region.RegionName === regionName) {
-                return region.RegionSchema.ExpandedData.RegionDefinition.ComponentPresentationConstraints
+                return definition?.ComponentPresentationConstraints ?? [];
             }
-            const nestedRegion = region.RegionSchema.ExpandedData.RegionDefinition.NestedRegions
-            if (nestedRegion && nestedRegion.length > 0) {
-                const foundRegion: any = this.getConstraints(nestedRegion, regionName)
-                if (foundRegion.length > 0) {
-                    return foundRegion
+
+            const nestedRegions = definition?.NestedRegions;
+            if (nestedRegions?.length) {
+                const found = this.findConstraintsRecursive(nestedRegions, regionName);
+                if (found !== null) {
+                    return found;
                 }
             }
         }
-        return []
+
+        return null;
     }
 
     togglePageInfo(showPageInfo: boolean) {

@@ -2,7 +2,7 @@ export interface PageSchema {
   '$type': string;
   Id: string;
   Title: string;
-  AllowedMultimediaTypes: any[];
+  AllowedMultimediaTypes: unknown[];
   ApplicableActions: ApplicableAction[];
   BluePrintInfo: BluePrintInfo;
   BundleProcess: OwningRepository;
@@ -56,8 +56,8 @@ interface SecurityDescriptor {
 
 interface RegionDefinition3 {
   '$type': string;
-  ComponentPresentationConstraints: any[];
-  DefaultComponentPresentations: any[];
+  ComponentPresentationConstraints: ComponentPresentationConstraint[];
+  DefaultComponentPresentations: unknown[];
   IsLocalizable: boolean;
   NestedRegions: NestedRegion2[];
 }
@@ -93,7 +93,7 @@ interface ExpandedData2 {
 interface RegionDefinition2 {
   '$type': string;
   ComponentPresentationConstraints: ComponentPresentationConstraint[];
-  DefaultComponentPresentations: any[];
+  DefaultComponentPresentations: unknown[];
   IsLocalizable: boolean;
   NestedRegions: NestedRegion[];
 }
@@ -129,9 +129,9 @@ interface ExpandedData {
 interface RegionDefinition {
   '$type': string;
   ComponentPresentationConstraints: ComponentPresentationConstraint[];
-  DefaultComponentPresentations: any[];
+  DefaultComponentPresentations: unknown[];
   IsLocalizable: boolean;
-  NestedRegions: any[];
+  NestedRegions: NestedRegion[];
 }
 
 export interface ComponentPresentationConstraint {

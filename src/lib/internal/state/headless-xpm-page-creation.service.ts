@@ -1,10 +1,15 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { catchError, finalize, forkJoin, map, Observable, of, switchMap, tap, throwError } from "rxjs";
-import { PageTypesProps, StructureGroup } from "../tridion-bar/page-creation/page-types/page-types.model";
+import { catchError, finalize, forkJoin, map, Observable, of, Subject, switchMap, takeUntil, tap, throwError } from "rxjs";
+import { FolderItem } from "../tridion-bar/page-creation/page-details/page-details.model";
+import { StructureGroup } from "../tridion-bar/page-creation/page-types/page-types.model";
 import { OrganizationalItemData } from "../tridion-bar/page-info/item-selector/item-selector.model";
+import { CheckInPayload } from "../tridion-bar/page-info/page-info.model";
 import { StringUtils } from "../utils/StringUtils";
 import { XpmApiService } from "./headless-xpm-api.service";
+import { FormPageData } from "./headless-xpm-common.model";
 import { ComponentData } from "./headless-xpm-inline-editor.model";
+import { NotificationService } from "./headless-xpm-notification.service";
+import { ComponentPresentationItem, ItemActionResponse, MappedPageType, PageDataResponse, PageStructure, PageTypeRawItem } from "./headless-xpm-page-creation.model";
 import { XpmPageInfoService } from "./headless-xpm-page-info.service";
 import { PageData } from "./headless-xpm-page.model";
 
@@ -15,16 +20,17 @@ export class HeadlessXpmPageCreationService {
 
     private readonly apiService = inject(XpmApiService)
     private readonly xpmPageInfoService = inject(XpmPageInfoService)
+    private readonly notificationService = inject(NotificationService)
 
     private readonly _structureGroup = signal<StructureGroup[]>([])
     private readonly _createdPageId = signal<string | null>(null)
     private readonly _isPageTypesLoading = signal<boolean>(false)
     private readonly _showPageCreationModal = signal<boolean>(false)
-    private readonly _pageTypes = signal<PageTypesProps[]>([])
-    private readonly _defaultPageStructure = signal<any>(null)
-    private readonly _selectedPageType = signal<PageTypesProps | null>(null)
-    private readonly _formPageData = signal<any>(null)
-    private readonly _selectedPage = signal<any>(null)
+    private readonly _pageTypes = signal<MappedPageType[]>([])
+    private readonly _defaultPageStructure = signal<PageStructure | null>(null)
+    private readonly _selectedPageType = signal<MappedPageType | null>(null)
+    private readonly _formPageData = signal<FormPageData | null>(null)
+    private readonly _selectedPage = signal<PageData | null>(null)
     private readonly _isPageInfoLoading = signal<boolean>(false)
     private readonly _pageInfoError = signal<string | null>(null)
 
@@ -40,11 +46,13 @@ export class HeadlessXpmPageCreationService {
     readonly isPageInfoLoading = this._isPageInfoLoading.asReadonly();
     readonly pageInfoError = this._pageInfoError.asReadonly();
 
+    private destroy$ = new Subject<void>();
+
     togglePageCreationModal() {
         this._showPageCreationModal.set(!this.showPageCreationModal())
     }
 
-    getPageTypes() {
+    getPageTypes(): void {
         // Get Page Id
         const pageId = this.xpmPageInfoService.getPageId();
         if (!pageId) return;
@@ -56,135 +64,178 @@ export class HeadlessXpmPageCreationService {
         // Implementation for fetching page types
         this.apiService.getItems<PageData>(`/items/${escapedPageId}?useDynamicVersion=true`).pipe(
             // Get Organizational Item
-            switchMap((response) => {
+            switchMap((response: PageData) => {
                 //console.log(response)
                 const organizationalItemId = StringUtils.sanitizeIdentifier(response.BluePrintInfo.OwningRepository.IdRef)
                 return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(organizationalItemId))
             }),
             // Get Home Structure Group
-            switchMap((structureGroups) => {
-                const filteredStructureGroups = structureGroups.filter(item => item.$type === "StructureGroup")
-                if (filteredStructureGroups.length === 0) {
+            switchMap((structureGroups: OrganizationalItemData[]) => {
+                const homeStructuregroup = structureGroups.find(item => item.$type === "StructureGroup" && item.Title === 'Home')
+
+                if (!homeStructuregroup) {
                     return throwError(() => new Error("Structure Group 'Home' not found."));
                 }
 
-                const homeStructuregroupId = filteredStructureGroups.find((structureGroup) => structureGroup.Title === "Home")?.Id as string;
-
-                return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(homeStructuregroupId));
+                return this.apiService.getItems<OrganizationalItemData[]>(baseUrl(homeStructuregroup.Id));
             }),
             // Get Page Types
-            switchMap((homeStructureGroupResponse) => {
-                const pageTypesStructureGroupId = homeStructureGroupResponse.find(homeStructureGroup => homeStructureGroup.Title === "_Page Types")?.Id as string
-                return this.apiService.getItems<any[]>(baseUrl(pageTypesStructureGroupId))
+            switchMap((homeStructureGroupResponse: OrganizationalItemData[]) => {
+                const pageTypesStructureGroupId = homeStructureGroupResponse.find(item => item.Title === "_Page Types")
+                return this.apiService.getItems<PageTypeRawItem[]>(baseUrl(pageTypesStructureGroupId?.Id as string))
             }),
-            finalize(() => this._isPageTypesLoading.set(false))
-        ).subscribe({
-            next: (pageTypes: any) => {
-                // console.log("Page Template:", pageTypes)
-                this._pageTypes.set(pageTypes.map((template: any) => ({
+            map((pageTypes: PageTypeRawItem[]): MappedPageType[] =>
+                pageTypes.map((template) => ({
                     pageId: template.Id,
                     pageTitle: template.Title,
                     pageSchema: {
                         schemaId: template.RegionSchema.IdRef,
-                        schemaTitle: template.RegionSchema.Title,
+                        schemaTitle: template.RegionSchema.Title ?? '',
                     },
                     pageTemplate: {
                         templateId: template.PageTemplate.IdRef,
-                        templateTitle: template.PageTemplate.Title
+                        templateTitle: template.PageTemplate.Title ?? '',
                     },
-                    publicationId:template.BluePrintInfo.OwningRepository.IdRef
-                })))
+                    publicationId: template.BluePrintInfo.OwningRepository?.IdRef ?? '',
+                }))
+            ),
+            finalize(() => this._isPageTypesLoading.set(false)),
+            takeUntil(this.destroy$)
+        ).subscribe({
+            next: (mappedPageTypes: MappedPageType[]) => {
+                this._pageTypes.set(mappedPageTypes);
             },
-            error: (err) => console.log("Failed to fetch page types", err),
+            error: (err) => {
+                console.log("Failed to fetch page types", err);
+                const errorMessage =
+                    (err as { error?: { Message?: string } })?.error?.Message ||
+                    (err as Error)?.message ||
+                    'Unknown error';
+                this.notificationService.error("Error", `Failed to load page types:${err?.error?.Message}`)
+            },
             complete: () => {
                 this._isPageTypesLoading.set(false)
             },
         })
     }
 
-    setSelectedPageType(pagetype: PageTypesProps) {
+    setSelectedPageType(pagetype: MappedPageType) {
         this._selectedPageType.set(pagetype)
-        //this.getSelectedPageData(pagetype.pageId)
     }
 
-    updateSelectedPageData() {
-        const pageId = this.selectedPageType()?.pageId as string
-        //console.log(pageId)
-        this._isPageInfoLoading.set(true)
-        this._pageInfoError.set(null)
+    updateSelectedPageData(): Observable<PageStructure> {
+        const pageId = this.selectedPageType()?.pageId;
+        if (!pageId) {
+            return throwError(() => new Error("No page type selected."));
+        }
+
+        this._isPageInfoLoading.set(true);
+        this._pageInfoError.set(null);
 
         const sanitizedId = StringUtils.sanitizeIdentifier(pageId);
-        this.apiService.getItems<PageData>(`/items/${sanitizedId}?useDynamicVersion=true`).pipe(
-            switchMap((pageResponse) => {
 
-                const copyRequests = pageResponse.Regions.flatMap(region => region.ComponentPresentations.map((item) => {
-                    const componentId = StringUtils.sanitizeIdentifier(item.Component.IdRef);
-                    return this.apiService.getItems<ComponentData>(`/items/${componentId}?useDynamicVersion=true`).pipe(
-                        switchMap((componentData) => {
-                            const destinationFolderId = StringUtils.sanitizeIdentifier(componentData.LocationInfo.OrganizationalItem.IdRef)
-                            return this.apiService.postItem(`/items/${componentId}/copy/${destinationFolderId}`, {
-                                makeUnique: true
-                            })
-                        }),
-                        switchMap((copyResponse: any) => {
-                            const copyComponentId = StringUtils.sanitizeIdentifier(copyResponse?.Id)
-                            return this.apiService.postItem(`/items/${copyComponentId}/checkOut`, {})
-                        }),
-                        switchMap((checkoutResponse: any) => {
-                            const checkOutId = StringUtils.sanitizeIdentifier(checkoutResponse?.Id)
-                            const currentDate = new Date().toISOString()
-                            const componentTitle = `${this.formPageData().name}_${item.Component.Title}_${currentDate}`
-                            item.Component.Title = componentTitle
-                            checkoutResponse.Title = componentTitle
-                            return this.apiService.updateItem(`/items/${checkOutId}`, checkoutResponse)
-                        }),
-                        switchMap((updateResponse) => {
-                            const updatedComponentId = StringUtils.sanitizeIdentifier(updateResponse?.Id);
-                            return this.apiService.checkin(`/items/${updatedComponentId}/checkIn`, {}).pipe(
-                                map((checkinResponse: any) => {
-                                    item.Component.IdRef = checkinResponse?.Id;
-                                    return checkinResponse
-                                })
-                            )
-                        }),
+        return this.apiService.getItems<PageDataResponse>(`/items/${sanitizedId}?useDynamicVersion=true`).pipe(
+            switchMap((pageResponse: PageDataResponse) => {
+                const copyRequests: Observable<ItemActionResponse | null>[] = pageResponse.Regions.flatMap(region =>
+                    region.ComponentPresentations.map((item: ComponentPresentationItem) => this.processComponentCopyWorkflow(item))
+                );
 
-                        catchError(err => {
-                            console.error(`Failed to copy component ${componentId}`, err)
-                            return of(null)
-                        })
-                    )
-                }))
                 if (copyRequests.length === 0) {
-                    return of(pageResponse)
+                    return of(pageResponse);
                 }
-                return forkJoin(copyRequests).pipe(
-                    map(() => pageResponse)
-                )
-            })
-        ).subscribe({
-            next: (updatedPageResponse) => {
-                const pageStructure = { ...this.defaultPageStructure() }
+
+                return forkJoin(copyRequests).pipe(map(() => pageResponse));
+            }),
+            map((updatedPageResponse: PageDataResponse) => {
+                const pageStructure = { ...this.defaultPageStructure() };
                 pageStructure["Regions"] = updatedPageResponse.Regions;
-                this._defaultPageStructure.set(pageStructure)
-                //console.log(`Final page Structure with Copied Components`, pageStructure)
-            },
-            complete: () => {
-                this._isPageInfoLoading.set(false)
-                this._pageInfoError.set(null)
-            },
-            error: (err) => {
-                console.error("Error in page data:", err)
-                this._isPageInfoLoading.set(false)
-                this._pageInfoError.set(err.error.Message)
-            }
-        })
+                this._defaultPageStructure.set(pageStructure);
+                return pageStructure;
+            }),
+            tap({
+                next: (pageStructure) => {
+                    this._isPageInfoLoading.set(false);
+                    this._pageInfoError.set(null);
+                },
+                error: (err) => {
+                    console.error("Error in page data update:", err);
+                    this._isPageInfoLoading.set(false);
+                    this._pageInfoError.set(err?.error?.Message || "Failed to update page structure.");
+                    this.notificationService.error("Error", err?.error?.Message || "Failed to update page.")
+                }
+            })
+        );
+    }
+
+    private processComponentCopyWorkflow(item: ComponentPresentationItem): Observable<ItemActionResponse | null> {
+        const componentId = StringUtils.sanitizeIdentifier(item.Component.IdRef);
+
+        return this.apiService.getItems<ComponentData>(`/items/${componentId}?useDynamicVersion=true`).pipe(
+            // Copy component and pass forward componentData
+            switchMap((componentData: ComponentData) => {
+                const destinationFolderId = StringUtils.sanitizeIdentifier(componentData.LocationInfo.OrganizationalItem.IdRef);
+                return this.apiService.postItem<ItemActionResponse>(`/items/${componentId}/copy/${destinationFolderId}`, { makeUnique: true })
+                    .pipe(map((copyResponse: ItemActionResponse) => ({ componentData, copyResponse })));
+            }),
+
+            // Check out copied component
+            switchMap(({ componentData, copyResponse }: { componentData: ComponentData; copyResponse: ItemActionResponse }) => {
+                const copyComponentId = StringUtils.sanitizeIdentifier(copyResponse.Id);
+                return this.apiService.postItem<ItemActionResponse>(`/items/${copyComponentId}/checkOut`, {})
+                    .pipe(map((checkoutResponse:ItemActionResponse) => ({ componentData, checkoutResponse })));
+            }),
+
+            // Rename and update
+            switchMap(({ componentData, checkoutResponse }: { componentData: ComponentData; checkoutResponse: ItemActionResponse }) => {
+                const checkOutId = StringUtils.sanitizeIdentifier(checkoutResponse?.Id as string);
+                const currentDate = new Date().toISOString();
+                const componentTitle = `${this.formPageData()?.name}_${item.Component.Title}_${currentDate}`;
+
+                item.Component.Title = componentTitle;
+                checkoutResponse.Title = componentTitle;
+
+                return this.apiService.updateItem<ItemActionResponse>(`/items/${checkOutId}`, checkoutResponse)
+                    .pipe(map((updateResponse: ItemActionResponse) => ({ componentData, updateResponse })));
+            }),
+
+            // Check in
+            switchMap(({ componentData, updateResponse }) => {
+                const updatedComponentId = StringUtils.sanitizeIdentifier(updateResponse.Id);
+                return this.apiService.checkin<ItemActionResponse, CheckInPayload>(`/items/${updatedComponentId}/checkIn`, {}).pipe(
+                    map((checkinResponse: ItemActionResponse) => {
+                        item.Component.IdRef = checkinResponse.Id;
+                        return { componentData, checkinResponse };
+                    })
+                );
+            }),
+
+            // Promote component to owning publication
+            switchMap(({ componentData, checkinResponse }) => {
+                const owningRepositoryId = componentData.BluePrintInfo.OwningRepository.IdRef;
+                const checkedInComponentId = StringUtils.sanitizeIdentifier(checkinResponse.Id)
+                const promotiondata = {
+                    DestinationRepositoryId: owningRepositoryId,
+                    Instruction: {
+                        "Mode": "FailOnError",
+                        "Recursive": true
+                    }
+                }
+                return this.apiService.postItem(`/items/${checkedInComponentId}/promote`, promotiondata)
+                    .pipe(map(() => checkinResponse));
+            }),
+
+            catchError((err) => {
+                console.error(`Failed to promote component ${componentId}`, err);
+                return of(null);
+            })
+        );
     }
 
     updateFormData(formPageData: { name: string; filename: string; }) {
         this._formPageData.set(formPageData)
     }
 
-    createPage() {
+    createPage<PageResponse>(): Observable<PageResponse> {
         const pageData = this.defaultPageStructure()
         return this.apiService.postItem(`/items?autoCheckIn=true`, pageData)
     }
@@ -197,15 +248,14 @@ export class HeadlessXpmPageCreationService {
         const tcmid = StringUtils.sanitizeIdentifier(id)
         const url = `/items/${tcmid}/items?useDynamicVersion=true&rloItemTypes=StructureGroup&recursive=true&details=IdAndTitleOnly`
         this.apiService.getItems<StructureGroup[]>(url).subscribe(strGroup => {
-            //console.log(strGroup)
             this._structureGroup.set(strGroup)
         })
     }
 
-    getDefaultPageModel(structuregroupId: string) {
-        return this.apiService.getItems<any>(`/item/defaultModel/Page?containerId=${encodeURIComponent(structuregroupId)}`)
+    getDefaultPageModel(structuregroupId: string):Observable<PageStructure> {
+        return this.apiService.getItems<PageStructure>(`/item/defaultModel/Page?containerId=${encodeURIComponent(structuregroupId)}`)
             .pipe(
-                tap((pageStructure) => {
+                tap((pageStructure:PageStructure) => {
                     const currentForm = this.formPageData();
                     const selectedType = this.selectedPageType();
 
@@ -237,7 +287,7 @@ export class HeadlessXpmPageCreationService {
             );
     }
 
-    geteFolderItems(selectedStrGroupId: string): Observable<any> {
+    geteFolderItems(selectedStrGroupId: string): Observable<FolderItem[]> {
         const tcmId = StringUtils.sanitizeIdentifier(selectedStrGroupId)
         return this.apiService.getItems(`/items/${tcmId}/items?useDynamicVersion=true&recursive=false&details=Contentless`)
     }

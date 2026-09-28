@@ -7,12 +7,18 @@ import { InlineEditorService } from "../internal/state/headless-xpm-inline-edito
 import { HeadlessXpmProviderState } from "../internal/state/headless-xpm-provider.state";
 import { XpmStateService } from "../internal/state/headless-xpm-state.service";
 import { StringUtils } from "../internal/utils/StringUtils";
+import { StyleValue } from "../internal/state/headless-xpm-common.model";
 import { InlineEditor } from "./inline-editor/inline-editor";
 
-function splitStyle(style: string | Record<string, any> | null | undefined) {
+interface SplitStyleResult {
+  styleString: string | null;
+  styleObject: StyleValue | null;
+}
+
+function splitStyle(style: string | StyleValue | null | undefined): SplitStyleResult {
     return {
         styleString: typeof style === 'string' ? style : null,
-        styleObject: style && typeof style === 'object' && Object.keys(style).length ? style : null
+        styleObject: style && typeof style === 'object' && Object.keys(style).length ? style as StyleValue : null
     };
 }
 
@@ -39,10 +45,10 @@ export class HeadlessXpmEditor implements OnInit, OnDestroy {
     readonly isXpmEditingEnabled = this._isXpmEditingEnabled.asReadonly();
     readonly tcmId = input.required<string>();
     readonly isPage = input(false);
-    readonly containerStyle = input<string | Record<string, any>>({});
-    readonly contentStyle = input<string | Record<string, any>>({});
-    readonly linkStyle = input<string | Record<string, any>>({});
-    readonly iconStyle = input<string | Record<string, any>>({});
+    readonly containerStyle = input<string | StyleValue>({});
+    readonly contentStyle = input<string | StyleValue>({});
+    readonly linkStyle = input<string | StyleValue>({});
+    readonly iconStyle = input<string | StyleValue>({});
 
     readonly editUrl = computed(() => {
         const editorUrl = this.providerState?.editorUrl();

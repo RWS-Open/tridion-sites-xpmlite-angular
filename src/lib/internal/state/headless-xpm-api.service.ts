@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 
 import { AUTH_CONFIG, AuthConfig } from "../../auth-config";
+import { CheckInPayload, ItemResponse } from "../tridion-bar/page-info/page-info.model";
 import { AuthService } from "./headless-xpm-auth.service";
 import { AuthResponse } from "./headless-xpm-page.model";
 
@@ -14,7 +15,7 @@ export class XpmApiService {
     private readonly httpClient = inject(HttpClient);
     private readonly authService = inject(AuthService);
     private readonly config: AuthConfig = inject(AUTH_CONFIG)
-    
+
     private readonly baseUrl = this.config.baseUrl;
     //private readonly token = this.authService.getAccessToken()
 
@@ -25,9 +26,9 @@ export class XpmApiService {
         });
     }
 
-    postItem<T, TBody>(url: string, body: TBody): Observable<T> {
-        return this.httpClient.post<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error:HttpErrorResponse) => this.handleHttpError<T>(error, () => this.postItem(url, body)))
+    postItem<TResponse = ItemResponse, TBody = unknown>(url: string, body: TBody): Observable<TResponse> {
+        return this.httpClient.post<TResponse>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
+            catchError((error: HttpErrorResponse) => this.handleHttpError<TResponse>(error, () => this.postItem(url, body)))
         )
     }
 
@@ -37,28 +38,28 @@ export class XpmApiService {
         )
     }
 
-    updateItem<T>(url: string, body: T): Observable<T> {
-        return this.httpClient.put<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error: HttpErrorResponse) => this.handleHttpError<T>(error, () => this.updateItem(url, body)))
+    updateItem<TResponse = ItemResponse, TBody = unknown>(url: string, body: TBody): Observable<TResponse> {
+        return this.httpClient.put<TResponse>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
+            catchError((error: HttpErrorResponse) => this.handleHttpError<TResponse>(error, () => this.updateItem(url, body)))
         )
     }
 
-    checkOutItem<T>(url: string, body: Partial<T>): Observable<T> {
-        return this.httpClient.post<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error: HttpErrorResponse) => this.handleHttpError<T>(error, () => this.checkOutItem(url, body)))
+    checkOutItem<TResponse = ItemResponse, TBody = Record<string, unknown>>(url: string, body: TBody): Observable<TResponse> {
+        return this.httpClient.post<TResponse>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
+            catchError((error: HttpErrorResponse) => this.handleHttpError<TResponse>(error, () => this.checkOutItem(url, body)))
+        )
+    }
+    checkin<TResponse = ItemResponse, TBody = Partial<CheckInPayload>>(url: string, body: TBody): Observable<TResponse> {
+        return this.httpClient.post<TResponse>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
+            catchError((error: HttpErrorResponse) => this.handleHttpError<TResponse>(error, () => this.checkin(url, body)))
         )
     }
 
-    checkin<T>(url: string, body: T): Observable<T> {
-        return this.httpClient.post<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error: HttpErrorResponse) => this.handleHttpError<T>(error, () => this.checkin(url, body)))
-        )
-    }
 
-    publish<T>(url: string, body: T): Observable<T> {
-        return this.httpClient.post<T>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
-            catchError((error: HttpErrorResponse) => this.handleHttpError<T>(error, () => this.publish(url, body)))
-        )
+    publish<TResponse = unknown, TBody = unknown>(url: string, body: TBody): Observable<TResponse> {
+        return this.httpClient.post<TResponse>(`${this.baseUrl}${url}`, body, { headers: this.getRequestHeaders() }).pipe(
+            catchError((error: HttpErrorResponse) => this.handleHttpError<TResponse>(error, () => this.publish<TResponse, TBody>(url, body)))
+        );
     }
 
     private handleHttpError<T>(error: HttpErrorResponse, retryFn: () => Observable<T>): Observable<T> {

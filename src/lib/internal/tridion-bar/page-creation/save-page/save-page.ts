@@ -1,11 +1,13 @@
 import { Component, computed, inject, OnDestroy, OnInit } from "@angular/core";
 
 import { Subject, takeUntil } from "rxjs";
+import { NotificationService } from "../../../state/headless-xpm-notification.service";
 import { HeadlessXpmPageCreationService } from "../../../state/headless-xpm-page-creation.service";
 import { PublishService } from "../../../state/headless-xpm-publish.service";
 import { StepperService } from "../../../state/headless-xpm-stepper.service";
 import { StringUtils } from "../../../utils/StringUtils";
 import { PageRegion } from "../../page-region/page-region";
+import { PageResponse } from "./save-page.model";
 
 @Component({
     selector: "app-save-page",
@@ -20,6 +22,7 @@ export class SavePage implements OnInit, OnDestroy {
     private readonly pageCreationService = inject(HeadlessXpmPageCreationService)
     private readonly stepperService = inject(StepperService);
     private readonly publishService = inject(PublishService)
+    private readonly notificationService = inject(NotificationService)
 
     page = computed(() => this.pageCreationService.defaultPageStructure())
     pageInfoError = computed(() => this.pageCreationService.pageInfoError())
@@ -32,8 +35,8 @@ export class SavePage implements OnInit, OnDestroy {
         this.stepperService.setStepError(null)
         this.stepperService.nextRequest$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.stepperService.isLoading.set(true);
-            this.pageCreationService.createPage().subscribe({
-                next: (pageResponse: any) => {
+            this.pageCreationService.createPage<PageResponse>().subscribe({
+                next: (pageResponse) => {
                     if (pageResponse) {
                         //console.log(pageResponse)
                         this.pageCreationService.updateNewPageId(pageResponse.Id)
@@ -42,12 +45,14 @@ export class SavePage implements OnInit, OnDestroy {
                         this.stepperService.isLoading.set(false);
                         this.stepperService.complete();
                         this.stepperService.setStepError(null)
+                        this.notificationService.success("Success", `Page ${pageResponse.Title} created successfully!`)
                     }
                 }, error: (err) => {
                     console.error('Error creating page:', err)
                     this.stepperService.setStepError(err.error.Message)
                     this.stepperService.isLoading.set(false);
                     this.stepperService.canNext.set(false);
+                    this.notificationService.error("Error", `Failed to create page ${err.err.Message}.`)
                 }
             })
         });

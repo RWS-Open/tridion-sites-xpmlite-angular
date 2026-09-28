@@ -2,8 +2,9 @@ import { NgClass } from "@angular/common";
 import { Component, computed, inject, OnDestroy, OnInit } from "@angular/core";
 import { Subject, takeUntil } from "rxjs";
 import { StepperService } from "../../../state//headless-xpm-stepper.service";
+import { MappedPageType } from "../../../state/headless-xpm-page-creation.model";
 import { HeadlessXpmPageCreationService } from "../../../state/headless-xpm-page-creation.service";
-import { PageTypesProps } from "./page-types.model";
+
 
 
 @Component({
@@ -23,7 +24,7 @@ export class PageTypes implements OnInit, OnDestroy {
     isLoading = computed(() => this.pageCreationService.isPageTypesLoading())
     selecetedPageType = computed(() => this.pageCreationService.selectedPageType())
 
-    updateSelectedPageType(pageType: PageTypesProps) {
+    updateSelectedPageType(pageType: MappedPageType) {
         this.pageCreationService.setSelectedPageType(pageType)
         this.stepperService.canNext.set(true);
     }

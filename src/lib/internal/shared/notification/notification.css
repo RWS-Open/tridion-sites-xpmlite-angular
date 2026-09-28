@@ -2,25 +2,61 @@
     position: fixed;
     top: 20px;
     right: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
     z-index: 9999;
     padding: 12px 20px;
     border-radius: 6px;
-    color: white;
+    color: #333;
+    width: 300px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+}
+
+.notification-message {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
 }
 
 .success {
-    background: #007373;
+    border-left: 5px solid #007373;
 }
 
 .error {
-    background: #ef4444;
+    border-left: 5px solid #ef4444;
 }
 
 .info {
-    background: #3b82f6;
+    /*  background: #3b82f6; */
+    border-left: 5px solid #3b82f6;
 }
 
 .warning {
-    background: #f59e0b;
+    border-left: 5px solid #f59e0b;
+}
+
+.notification-details-text {
+    font-size: 14px;
+}
+
+.notification-clear-icon {
+    cursor: pointer;
+}
+
+.notification-type {
+    display: flex;
+    gap: 5px;
+    align-self: flex-start;
+    padding-top: 5px;
+}
+
+.notification-heading{
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
 }

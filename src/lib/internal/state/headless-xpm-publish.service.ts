@@ -1,11 +1,27 @@
 import { effect, inject, Injectable, signal } from "@angular/core";
 import { concatMap, map, Observable } from "rxjs";
 
+import { PublishingStatus, publishResult } from "../tridion-bar/page-creation/publish-page/publish-new-page.model";
 import { ChildPublicationsData, ChildPublicationsProps, PubishableTargets } from "../tridion-bar/page-info/publish-page/publish-page-model";
 import { StringUtils } from "../utils/StringUtils";
 import { XpmApiService } from "./headless-xpm-api.service";
 import { AuthService } from "./headless-xpm-auth.service";
 import { PublishBody } from "./headless-xpm-publish-model";
+
+interface PublicationItemResponse {
+    Id: string;
+    Title: string;
+    BusinessProcessType?: {
+        IdRef: string;
+        Title?: string;
+    };
+    [key: string]: unknown;
+}
+
+export interface MappedChildPublication {
+    id: string;
+    title: string;
+}
 
 @Injectable({
     providedIn: "root"
@@ -59,23 +75,23 @@ export class PublishService {
         this._showPublishModal.update(value => !value)
     }
 
-    getPagePublishInfo(publicationId:string) {
-        
+    getPagePublishInfo(publicationId: string) {
+
         //const publicationId = StringUtils.sanitizeIdentifier(this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
         if (!publicationId) return;
 
         const url = `/items/${publicationId}?useDynamicVersion=true`;
 
-        this.apiService.getItems<any>(url).pipe(
-            concatMap((response: any): Observable<any> => {
-                const businessProcessId = StringUtils.sanitizeIdentifier(response.BusinessProcessType.IdRef)
+        this.apiService.getItems<PublicationItemResponse>(url).pipe(
+            concatMap((response: PublicationItemResponse): Observable<PubishableTargets[]> => {
+                const businessProcessId = StringUtils.sanitizeIdentifier(response.BusinessProcessType?.IdRef as string)
                 this._parentPublication.set({
                     title: response.Title,
                     id: response.Id
                 })
                 this._isTargetTypesLoading.set(true)
                 const targetTypeUrl = `/items/${businessProcessId}/publishableTargetTypes`;
-                return this.apiService.getItems<PubishableTargets>(targetTypeUrl);
+                return this.apiService.getItems<PubishableTargets[]>(targetTypeUrl);
             }),
             concatMap((targetTypeResponse: PubishableTargets[]): Observable<ChildPublicationsData[]> => {
                 this._publishableTargetTypes.set(targetTypeResponse);
@@ -84,24 +100,26 @@ export class PublishService {
                 return this.apiService.getItems<ChildPublicationsData[]>(childPublicationUrl);
             }),
 
-            map((childPublicationResponse: ChildPublicationsData[]) => {
-                return childPublicationResponse.map(publication => ({
+            map((childPublicationResponse: ChildPublicationsData[]): MappedChildPublication[] => {
+                return childPublicationResponse.map((publication: ChildPublicationsData) => ({
                     id: publication.Id,
                     title: publication.Title
                 }));
             })
         ).subscribe({
-            complete:() => {
-                this._isChilPublicationLoading.set(false)
-                this._isTargetTypesLoading.set(false)
-            },
-            next: (publishingData) => {
+            next: (publishingData: MappedChildPublication[]) => {
                 this._childPublications.set(publishingData)
                 //console.log("Mapped Child Publication data", publishingData);
             },
             error: (err) => {
-                console.error(err)
-            }
+                this._isChilPublicationLoading.set(false);
+                this._isTargetTypesLoading.set(false);
+                console.error("Failed to fetch publication info:", err);
+            },
+            complete: () => {
+                this._isChilPublicationLoading.set(false)
+                this._isTargetTypesLoading.set(false)
+            },
         });
     }
 
@@ -176,23 +194,23 @@ export class PublishService {
         this._selectedPublishingPriority.set(priority)
     }
 
-    publishPage(pageId:string) {
+    publishPage(pageId: string): Observable<publishResult> {
         const url = '/items/publish';
-        const publishBody: PublishBody = {
-            Ids:[pageId as string],
+        const publishBody = {
+            Ids: [pageId as string],
             TargetIdsOrPurposes: this._selectedTargetType(),
             PublishInstruction: {
                 ResolveInstruction: {
                     IncludeChildPublications: false,
                     IncludeComponentLinks: this.selectedDependentItems(),
-                    IncludeCurrentPublication: this.selectedParentPublication()!==null ? true : false,
+                    IncludeCurrentPublication: this.selectedParentPublication() !== null ? true : false,
                     IncludeDynamicVersion: !this.selectedItemsInProgress(),
                     IncludeWorkflow: this.selectedOverridePublishPriority(),
                     PublishInChildPublications: this.selectedChildPublication(),
                     PublishNewContent: this._selectedPublishingOptions()
                 }
             }
-        }
+        } as PublishBody
         if (!this.selectedDeploymentOption()) {
             publishBody.PublishInstruction["DeployAt"] = this.selectedDeploymentDatetime()?.toString()
 
@@ -200,7 +218,11 @@ export class PublishService {
         if (!this._selectedOverridePublishPriority()) {
             publishBody["Priority"] = this.selectedPublishingPriority() as string
         }
-        return this.apiService.publish(url, publishBody)
+        return this.apiService.publish<publishResult, PublishBody>(url, publishBody)
+    }
+
+    getPublishStatus<T = PublishingStatus>(transactionId: string): Observable<T> {
+        return this.apiService.getItems(`/items/${transactionId}?useDynamicVersion=true`)
     }
 
     constructor() {

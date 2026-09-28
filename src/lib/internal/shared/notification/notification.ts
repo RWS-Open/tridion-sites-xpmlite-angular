@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { NotificationService } from "../../state/headless-xpm-notification-service";
+import { NotificationService } from "../../state/headless-xpm-notification.service";
 @Component({
   selector: 'app-notification',
   standalone: true,
@@ -10,4 +10,8 @@ import { NotificationService } from "../../state/headless-xpm-notification-servi
 })
 export class XpmNotification {
   protected readonly notificationService = inject(NotificationService);
+  
+  clearNotification(){
+    this.notificationService.clear()
+  }
 }

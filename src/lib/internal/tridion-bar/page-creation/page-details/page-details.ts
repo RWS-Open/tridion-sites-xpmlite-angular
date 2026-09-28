@@ -1,9 +1,10 @@
 import { Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { catchError, debounceTime, of, Subject, takeUntil, tap } from "rxjs";
+import { catchError, debounceTime, of, Subject, switchMap, takeUntil } from "rxjs";
 import { HeadlessXpmPageCreationService } from "../../../state/headless-xpm-page-creation.service";
 import { StepperService } from "../../../state/headless-xpm-stepper.service";
 import { SelectedStructureGroup } from "../page-types/page-types.model";
+import { FolderItem } from "./page-details.model";
 
 @Component({
     selector: "app-page-details",
@@ -87,11 +88,13 @@ export class PageDetails implements OnInit, OnDestroy {
         this.stepperService.setPrevLabel("Previous");
     }
 
-    private validateAndProceed() {
+    private validateAndProceed():void {
         if (this.pageDetailsForm.invalid) {
             this.pageDetailsForm.markAllAsTouched();
             return;
         }
+
+        const selectedFolderId = this.selectedStrGroup()?.Id as string;
 
         this.stepperService.isLoading.set(true);
         this.backendGeneralError.set(null);
@@ -100,7 +103,7 @@ export class PageDetails implements OnInit, OnDestroy {
         const enteredName = formValues.name.trim().toLowerCase();
         const enteredFileName = formValues.filename.trim().toLowerCase();
 
-        this.pageCreationService.geteFolderItems(this.selectedStrGroup()?.Id as string).pipe(
+        this.pageCreationService.geteFolderItems(selectedFolderId).pipe(
             takeUntil(this.destroy$),
             catchError((err) => {
                 this.handleBackendErrors(err);
@@ -108,12 +111,12 @@ export class PageDetails implements OnInit, OnDestroy {
                 return of(null);
             })
         )
-            .subscribe((response: Record<string, unknown>[]) => {
+            .subscribe((response: FolderItem[] | null) => {
                 this.stepperService.isLoading.set(false);
 
                 if (!response) return;
-                const nameExists = response.some((item) => item["Title"] === enteredName);
-                const fileNameExists = response.some((item) => item["FileName"] === enteredFileName);
+                const nameExists = response.some((item) => item.Title === enteredName);
+                const fileNameExists = response.some((item) => item.FileName === enteredFileName);
 
                 const nameControl = this.pageDetailsForm.get('name');
                 const fileControl = this.pageDetailsForm.get('filename');
@@ -129,9 +132,9 @@ export class PageDetails implements OnInit, OnDestroy {
                 }
 
                 this.stepperService.isLoading.set(true);
-                const selectedFolderId = this.selectedStrGroup()?.Id as string;
+                
                 this.pageCreationService.getDefaultPageModel(selectedFolderId).pipe(
-                    tap(() => this.pageCreationService.updateSelectedPageData()),
+                    switchMap(() => this.pageCreationService.updateSelectedPageData()),
                     takeUntil(this.destroy$)
                 ).subscribe({
                     next: () => {

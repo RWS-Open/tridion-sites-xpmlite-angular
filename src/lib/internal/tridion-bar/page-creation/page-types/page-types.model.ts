@@ -1,14 +1,4 @@
-export interface PageTypesProps {
-    pageId: string;
-    pageTitle: string;
-    pageSchema: PageSchema;
-    pageTemplate: PageTemplate;
-    //regions?: PageRegion[];
-    BluePrintInfo:BluePrintInfo;
-    publicationId:string
-}
-
-interface BluePrintInfo{
+export interface BluePrintInfo{
     $type: string;
     IsLocalized: boolean;
     IsShared:boolean;
@@ -19,12 +9,12 @@ interface OwningRepository{
     IdRef: string;
     Title: string;
 }
-interface PageSchema {
+export interface PageSchema {
     schemaId: string;
     schemaTitle: string;
 }
 
-interface PageTemplate {
+export interface PageTemplate {
     templateId: string;
     templateTitle: string;
 }

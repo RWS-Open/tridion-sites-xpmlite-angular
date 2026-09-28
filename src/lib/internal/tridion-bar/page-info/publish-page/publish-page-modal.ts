@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from "@angular/core";
 
 import { tap } from "rxjs";
 import { HeadlessXpmModal } from "../../../shared/modal/modal";
+import { NotificationService } from "../../../state/headless-xpm-notification.service";
 import { XpmPageInfoService } from "../../../state/headless-xpm-page-info.service";
 import { PageData } from "../../../state/headless-xpm-page.model";
 import { PublishService } from "../../../state/headless-xpm-publish.service";
@@ -23,16 +24,17 @@ export class PublishPageModal implements OnInit {
     additionalSettingsTab = AdditionalSettingsTab;
     //publishItemsTab = PublishItemsTab
     private readonly xpmPageInfoService = inject(XpmPageInfoService)
+    private readonly notificationService = inject(NotificationService)
     private readonly publishService = inject(PublishService)
     private readonly _isPublishing = signal<boolean>(false)
 
     readonly isPublishing = this._isPublishing.asReadonly()
-    readonly publicationId = computed(() =>  this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
+    readonly publicationId = computed(() => this.xpmPageInfoService.pageInfo()?.BluePrintInfo.OwningRepository.IdRef as string)
     readonly targetTypeSelected = computed(() => this.publishService.selectedTargetType().length)
     readonly selectedChildPublications = computed(() => this.publishService.selectedChildPublication().length)
     readonly selectedParentPublication = computed(() => this.publishService.selectedParentPublication())
     readonly showPublishModal = this.publishService.showPublishModal
-    
+
     togglePublishingModal() {
         this.publishService.togglePublishModal()
     }
@@ -46,10 +48,19 @@ export class PublishPageModal implements OnInit {
     }
     onPublishPage() {
         this._isPublishing.set(true)
-        const pageId= this.xpmPageInfoService.pageId()
-        this.publishService.publishPage(pageId as string).subscribe(res => {
-            this.publishService.togglePublishModal()
-            this._isPublishing.set(false)
+        const pageId = this.xpmPageInfoService.pageId()
+
+        this.publishService.publishPage(pageId as string).subscribe({
+            next: () => {
+                this.publishService.togglePublishModal()
+                this.notificationService.success("Success", `Page "${pageId}" has been sent for publishing queue successfully!.`);
+                this._isPublishing.set(false)
+            },
+            error: (error) => {
+                this.publishService.togglePublishModal()
+                this.notificationService.error("Error", `Failed to publish page: ${error?.error?.Message || error}.`);
+                this._isPublishing.set(false)
+            }
         })
     }
 
@@ -61,11 +72,11 @@ export class PublishPageModal implements OnInit {
             const id = this.xpmPageInfoService.getPageId()
             if (id) {
                 this.xpmPageInfoService.pageInfoLoaded(id).pipe(
-                    tap((response:PageData) => {
+                    tap((response: PageData) => {
                         this.xpmPageInfoService.updatePageInfo(response)
                     })
                 ).subscribe(res => {
-                    const pubId = StringUtils.sanitizeIdentifier(res.BluePrintInfo.OwningRepository.IdRef) 
+                    const pubId = StringUtils.sanitizeIdentifier(res.BluePrintInfo.OwningRepository.IdRef)
                     this.publishService.getPagePublishInfo(pubId)
                 })
             }
